@@ -1,5 +1,5 @@
-# Maximo Agent Starter Kit
-An AI Agents template that has tools to complete some operations on Maximo and perform RAG.
+# ITAssist Pilot Repo 
+An AI Agent used to help troubleshoot, debug and find information quickly, as well as record/create records. 
 
 ## Environment Set-up
 
