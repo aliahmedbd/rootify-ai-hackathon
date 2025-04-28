@@ -16,4 +16,5 @@ streamlit
 pymilvus
 chromadb
 pypdf
+psycopg[binary]
 pygraphviz

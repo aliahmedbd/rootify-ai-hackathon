@@ -1,4 +1,4 @@
-name: maximo_agent_env
+name: lending_agent_env
 channels:
   - defaults
   - conda-forge
