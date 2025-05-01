@@ -1,4 +1,4 @@
-name: lending_agent_env
+name: devops_agent_env
 channels:
   - defaults
   - conda-forge
