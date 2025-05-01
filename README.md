@@ -20,5 +20,5 @@ conda env create -f environment.yml
 3. Activate the environment:
 
 ```
-conda activate maximo_agent_env
+conda activate devops_agent_env
 ```
