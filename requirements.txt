@@ -17,4 +17,5 @@ pymilvus
 chromadb
 pypdf
 psycopg[binary]
+psycopg2
 pygraphviz
