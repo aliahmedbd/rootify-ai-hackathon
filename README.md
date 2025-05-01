@@ -1,4 +1,4 @@
-# ITAssist Pilot Repo 
+# DevOpsAssist Pilot Repo 
 An AI Agent used to help troubleshoot, debug and find information quickly, as well as record/create records. 
 
 ## Environment Set-up
