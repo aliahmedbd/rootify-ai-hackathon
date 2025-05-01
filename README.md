@@ -8,7 +8,7 @@ An AI Agent used to help troubleshoot, debug and find information quickly, as we
 1. Navigate to the parent directory of the repo.
 
 ```
-cd ...\maximo-agent-starter-kit
+cd ...\DevOpsAssist
 ```
 
 2. Run the following conda command:
