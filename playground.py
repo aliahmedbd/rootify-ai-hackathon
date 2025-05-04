@@ -1,30 +1,49 @@
-from datetime import date
-from dotenv import load_dotenv
-_ = load_dotenv()
-from connectors.db_connector import PostgresConnector
-from connectors.db_schemas.table_schema import TablesSchema
+import os
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import DirectoryLoader
+from uuid import uuid4
+from langchain_huggingface import HuggingFaceEmbeddings
+
+from langchain_milvus import Milvus
 
 
-pg_connector = PostgresConnector()
 
-# schema = TablesSchema.postgres_metadata_schema
-# print(schema)
+def createEmbeddings():
+    
+    outputPath = os.environ["outputDir"]
 
-# pg_connector.create_table(table_name="TEST", schema=schema)
+    loader = DirectoryLoader(outputPath, glob="./*.md")
+    documents = loader.load()
 
-# data = {
-#     "id": 1,
-#     "query": "This is a Test",
-#     "issue": "Test Issue",
-#     "severity": 1,
-#     "createdate": date.today(),
-#     "status": "Open",
-#     "resolutiondate": None
-# }
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
+    texts = text_splitter.split_documents(documents)
+    uuids = [str(uuid4()) for _ in range(len(texts))]
+    embeddings = HuggingFaceEmbeddings(model_name=os.environ["emModel"])
+    db_file = os.environ["dbLocation"] + os.environ["dbFileName"]
+    print(f"The vector database will be saved to {db_file}")
 
-# pg_connector.insert_data(table_name="TEST", data=data)
+    # Construct the correct gRPC URI (ensure it's a string, not a tuple)
+    uri = f"https://{os.environ['grpcHost']}:{os.environ['grpcPort']}"
+    user = os.environ['user']  # Watsonx user (likely "root" or "ibmlhapikey")
+    password = os.environ['password']  # Watsonx API key
 
-# breakpoint()
-query = 'SELECT * FROM "TEST"'
+    # Now initialize the vector store with LangChain Milvus
+    vector_store = Milvus(
+        collection_name="ATT",    
+        embedding_function=embeddings,
+        connection_args={
+            "uri": uri,
+            "user": user,  # Ensure "user" is used instead of "username"
+            "password": password,
+            "secure": True  # Set to True if Watsonx requires TLS
+        },
+        index_params={"index_type": "FLAT", "metric_type": "L2"},
+        consistency_level="Strong",
+        drop_old=True
+    )
 
-pg_connector.query_data(query=query)
+    print("Milvus vector store initialized successfully!")
+
+    print("Adding documents to Milvus instance.")
+    vector_store.add_documents(documents=texts, ids=uuids)
+    print("Documents successfully added")

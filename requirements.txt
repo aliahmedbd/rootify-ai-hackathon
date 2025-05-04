@@ -6,6 +6,7 @@ langchain_experimental
 langchain-huggingface
 langchain-chroma
 sentence-transformers
+langchain_milvus
 tiktoken
 pdfminer.six
 IPython 
