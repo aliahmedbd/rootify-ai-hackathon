@@ -1,0 +1,11 @@
+# Watsonx.ai Credentials
+WATSONX_PROJECT_ID=
+IBM_CLOUD_APIKEY=
+WATSONX_URL=
+
+# PostgresSQL credentials
+PostGresHost="50e2a09d-d988-405b-b8de-7a885f365743.497129fd685f442ca4df759dd55ec01b.databases.appdomain.cloud"
+PostGresPort="31244"
+PostGresDB="ibmclouddb"
+PostGresUser="ibm_cloud_9a3059c8_df57_4e99_ae38_a34e20de34d4"
+PostGresPass="qko9r5ISR5ip4BFD3nr7n4yP5g0ykT9A"
