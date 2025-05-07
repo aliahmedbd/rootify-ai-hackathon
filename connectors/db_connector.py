@@ -60,11 +60,10 @@ class PostgresConnector:
         """
         with self.conn.cursor() as cur:
             cur.execute(query, params)
+            cols = [desc[0] for desc in cur.description]
             rows = cur.fetchall()
-            print("Query results:")
-            for row in rows:
-                print(row)
-            return rows
+            output = [cols] + rows
+            return output
 
 
     def close_connection(self):

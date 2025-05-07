@@ -20,3 +20,5 @@ pypdf
 psycopg[binary]
 psycopg2
 pygraphviz
+matplotlib
+seaborn
