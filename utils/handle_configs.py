@@ -14,7 +14,7 @@ def get_llm(config: Dict):
     llm = ChatWatsonx(
         model_id=model_id,
         url=os.environ["WATSONX_URL"],
-        apikey=os.environ["IBM_CLOUD_APIKEY"],
+        apikey=os.environ["WATSONX_APIKEY"],
         project_id=os.environ["WATSONX_PROJECT_ID"],
         params=model_params
     )
