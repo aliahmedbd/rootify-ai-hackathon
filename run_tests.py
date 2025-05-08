@@ -5,8 +5,10 @@ _ = load_dotenv()
 from tests.test_api import (
     test_postgres_create_table, 
     test_postgres_insert_data, 
-    test_postgres_query_data
+    test_postgres_query_data,
+    test_milvus_search
 )
+from tests.test_llms import test_postgres_agent_tools
 from tools.generate_report import generate_reports
 from dotenv import load_dotenv
 _ = load_dotenv()
@@ -17,6 +19,8 @@ FUNCTION_MAP = {
     "test_postgres_create_table": test_postgres_create_table,
     "test_postgres_insert_data": test_postgres_insert_data,
     "test_postgres_query_data": test_postgres_query_data,
+    "test_postgres_agent_tools": test_postgres_agent_tools,
+    "test_milvus_search": test_milvus_search
 }
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Run specific tests.")

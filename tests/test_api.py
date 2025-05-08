@@ -1,6 +1,7 @@
 from connectors.maximo_connector import MaximoConnector
 from connectors.db_connector import PostgresConnector
 from connectors.db_schemas.table_schema import TablesSchema
+from connectors.vector_db_connector import MilvusConnector
 from datetime import date
 
 
@@ -81,3 +82,18 @@ def test_postgres_query_data():
     query = 'SELECT * FROM "TEST"'
     data = pg_connector.query_data(query=query)
     return data
+
+
+def test_milvus_search():
+    """
+    Test Milvus similarity search
+    """
+    query = "What technologies are supported for containerized deployment of FCC application?"
+    milvus_conn = MilvusConnector()
+    results = milvus_conn.search(query=query)
+
+    print("\n🔍 Search Results:")
+    for i, res in enumerate(results, 1):
+        print(f"\nResult {i}:\n{res.page_content}\n")
+
+    return results
