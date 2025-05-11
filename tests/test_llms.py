@@ -1,9 +1,8 @@
 from agents.base_agent import AgentState
 # from agents.supervisor import SupervisorAgent
 # from agents.maximo_agent import MaximoAgent
-# from agents.vector_db_agent import ChromaAgent
+from agents.vector_db_agent import VectorDbAgent
 from agents.postgres_agent import PostGresAgent
-
 
 # def test_supervisor_classification():
 #     supervisor = SupervisorAgent()

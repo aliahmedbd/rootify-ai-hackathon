@@ -1,5 +1,5 @@
 from prompt_reference.vector_db_agent_prompts import vector_db_prompt
-from tools.vector_db_tools import VectorAgentTools
+from tools.vector_db_tools import vectorDbAgentTools
 
 from agents.base_agent import BaseAgent, AgentState
 from utils.handle_configs import get_llm
@@ -8,7 +8,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from config import Config
 
 
-class ChromaAgent(BaseAgent):
+class VectorDbAgent(BaseAgent):
     def __init__(self, name="vector_db_agent"):
 
         super().__init__(name)
@@ -19,7 +19,7 @@ class ChromaAgent(BaseAgent):
 
         # define and bind the tools to the agent.
         self.tools = [
-            VectorAgentTools.search
+            vectorDbAgentTools.similarity_search
             ]
 
         # the tools_dict enables the agent to call the tools by name.
@@ -58,11 +58,11 @@ class ChromaAgent(BaseAgent):
         selected_tool = state['tool_calls']
         print(f"Calling: {selected_tool}")
         # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "search":
+        if selected_tool == "similarity_search":
             # set the input parameters or arguments for the tool.
             tool_input = {
-                "user_input": state['user_input'],
-                "collection": "pdf_collection"
+                "query": state['vectordb_search'],
+                "k": 3 # state['top searches']
             }
 
             # invoke the tool and get the result.
@@ -76,24 +76,24 @@ class ChromaAgent(BaseAgent):
 
         return state
     
-    @staticmethod
-    def router(state: AgentState):
-        if len(state['vector_db_agent_response']) < 1:
-            return "vector_db_tools"
-        else:
-            return "supervisor"
+    # @staticmethod
+    # def router(state: AgentState):
+    #     if len(state['vector_db_agent_response']) < 1:
+    #         return "vector_db_tools"
+    #     else:
+    #         return "supervisor"
 
 
-class MilvusAgent(BaseAgent):
-    def __init__(self, name="vector_db_agent"):
+# class MilvusAgent(BaseAgent):
+#     def __init__(self, name="vector_db_agent"):
         
-        super().__init__(name)
+#         super().__init__(name)
 
-        # instantiate the parameters for the agent.
-        self.agent_params = Config.maximo_agent_params
-        self.llm = get_llm(self.agent_params)
+#         # instantiate the parameters for the agent.
+#         self.agent_params = Config.maximo_agent_params
+#         self.llm = get_llm(self.agent_params)
 
-        self.system_message = SystemMessage(content="""You are a milvus expert. Use the tools at your disposable to search for data related to the user query as best you can.""")
+#         self.system_message = SystemMessage(content="""You are a milvus expert. Use the tools at your disposable to search for data related to the user query as best you can.""")
 
-    def handle_input(self, state: AgentState):
-        raise NotImplementedError
+#     def handle_input(self, state: AgentState):
+#         raise NotImplementedError
