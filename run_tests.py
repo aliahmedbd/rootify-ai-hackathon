@@ -8,10 +8,13 @@ from tests.test_api import (
     test_postgres_query_data,
     test_milvus_search
 )
-from tests.test_llms import test_postgres_agent_tools
+from tests.test_llms import (
+    test_postgres_agent_tools,
+    test_vectordb_agent_tools
+)
 from tools.generate_report import generate_reports
 from dotenv import load_dotenv
-_ = load_dotenv()
+_ = load_dotenv(override=True)
 
 # Function map
 FUNCTION_MAP = {
@@ -20,7 +23,8 @@ FUNCTION_MAP = {
     "test_postgres_insert_data": test_postgres_insert_data,
     "test_postgres_query_data": test_postgres_query_data,
     "test_postgres_agent_tools": test_postgres_agent_tools,
-    "test_milvus_search": test_milvus_search
+    "test_milvus_search": test_milvus_search,
+    "test_vectordb_agent_tools": test_vectordb_agent_tools
 }
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Run specific tests.")

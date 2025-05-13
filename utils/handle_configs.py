@@ -11,6 +11,8 @@ def get_llm(config: Dict):
     """
     model_id = config['model_id']
     model_params = config['model_parameters']
+    
+    # instantiate the model with the parameters.
     llm = ChatWatsonx(
         model_id=model_id,
         url=os.environ["WATSONX_URL"],
