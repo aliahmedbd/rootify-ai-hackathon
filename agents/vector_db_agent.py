@@ -61,7 +61,7 @@ class VectorDbAgent(BaseAgent):
         if selected_tool == "similarity_search":
             # set the input parameters or arguments for the tool.
             tool_input = {
-                "query": state['vectordb_search'],
+                "query": state['user_input'],
                 "k": 3 # state['top searches']
             }
 
@@ -82,18 +82,3 @@ class VectorDbAgent(BaseAgent):
     #         return "vector_db_tools"
     #     else:
     #         return "supervisor"
-
-
-# class MilvusAgent(BaseAgent):
-#     def __init__(self, name="vector_db_agent"):
-        
-#         super().__init__(name)
-
-#         # instantiate the parameters for the agent.
-#         self.agent_params = Config.maximo_agent_params
-#         self.llm = get_llm(self.agent_params)
-
-#         self.system_message = SystemMessage(content="""You are a milvus expert. Use the tools at your disposable to search for data related to the user query as best you can.""")
-
-#     def handle_input(self, state: AgentState):
-#         raise NotImplementedError

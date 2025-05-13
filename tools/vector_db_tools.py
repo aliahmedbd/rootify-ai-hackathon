@@ -1,7 +1,5 @@
-from connectors.vector_db_connector import vectorDbConnector
-
+from connectors.vector_db_connector import MilvusConnector
 from pydantic import BaseModel, Field
-from typing import Dict, Union, Any
 from langchain.agents import tool
 
 
@@ -19,6 +17,6 @@ class vectorDbAgentTools:
         :return: List of search results.
         """
 
-        vdb_connector = vectorDbConnector()
+        vdb_connector = MilvusConnector()
         response = vdb_connector.similarity_search(query=query, k=k)
         return response
