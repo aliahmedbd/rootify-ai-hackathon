@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tools.generate_report import ReportAgent, DataFetcher, HTMLReportGenerator, MatplotlibChartGenerator, SummaryReportGenerator
+from tools.report_generator_tools import ReportAgent, DataFetcher, HTMLReportGenerator, MatplotlibChartGenerator, SummaryReportGenerator
 from connectors.db_connector import PostgresConnector
  
 def main():
