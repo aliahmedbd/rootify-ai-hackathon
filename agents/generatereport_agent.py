@@ -1,77 +1,30 @@
-from prompt_reference.reportgenerate_agent_prompts import reportgenerate_prompt
-from tools.report_generator_tools import ReportAgent
-
-from agents.base_agent import BaseAgent, AgentState
-from utils.handle_configs import get_llm
-
-from langchain_core.messages import HumanMessage, SystemMessage
-from config import Config
-
-
-class GenerateReport(BaseAgent):
-    def __init__(self, name="generatereport_agent"):
-
-        super().__init__(name)
-
-        # instantiate the parameters for the agent.
-        self.agent_params = Config.reportgenerate_agent_params
-        self.llm = get_llm(self.agent_params)
-
-        # define and bind the tools to the agent.
-        self.tools = [
-            ReportAgent.query_data,
-            ]
-
-        # the tools_dict enables the agent to call the tools by name.
-        self.tools_dict = {t.name: t for t in self.tools}
-        self.llm_with_tools = self.llm.bind_tools(self.tools)        
-
-
-    def handle_input(self, state: AgentState):
-        """
-        Takes action based on the state of the agent.
-        :param state: The state of the agent containing the user input and states to be updated.
-        :return: updated state for the agent.
-        """
-
-        # use the tools to get the results and responses before getting back to the supervisor.
-        system_msg = reportgenerate_prompt.format(state=state)
-        message = [
-            SystemMessage(content=system_msg),
-            HumanMessage(content=f"{state['user_input']}")
-        ]
-        # call the llm with the message
-        agent_response = self.llm_with_tools.invoke(message)
-
-        # update the state with the agent response
-        if hasattr(agent_response, 'tool_calls'):
-            try:
-                state['tool_calls'] = agent_response.tool_calls[0]['name']
-            except IndexError:
-                pass
-
-        return state
-    
-
-    def use_reportgenerator_tools(self, state: AgentState):
-        # check the tool to use.
-        selected_tool = state['tool_calls']
-        print(f"Calling: {selected_tool}")
-        # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "query_data":
-            # set the input parameters or arguments for the tool.
-            tool_input = {
-                "query": state['report_query'],
-                "params": None
-            }
-
-            # invoke the tool and get the result.
-            GenerateReport_agent_response = self.tools_dict[selected_tool].invoke(tool_input)
-
-            # update the state with the tool result.
-            state['GenerateReport_agent_response'] = GenerateReport_agent_response
-            state['memory_chain'].append({
-                'GenerateReport_agent_response': state['GenerateReport_agent_response']
-            })
-
-        return state
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from tools.generate_report import ReportAgent, DataFetcher, HTMLReportGenerator, MatplotlibChartGenerator, SummaryReportGenerator
+from connectors.db_connector import PostgresConnector
+ 
+def main():
+    # Initialize the Postgres connector
+    connector = PostgresConnector()
+    data_fetcher = DataFetcher(connector)
+ 
+    # Initialize report generators
+    html_generator = HTMLReportGenerator()
+    matplotlib_generator = MatplotlibChartGenerator()
+    summary_generator = SummaryReportGenerator()
+ 
+    # Create a list of report generators
+    report_generators = [html_generator, matplotlib_generator, summary_generator]
+ 
+    # Create a report agent
+    report_agent = ReportAgent(data_fetcher, report_generators)
+ 
+    # Define the query to fetch data
+    query = 'SELECT * FROM "TEST"'
+ 
+    # Generate reports
+    report_agent.generate_reports(query)
+ 
+if __name__ == "__main__":
+    main()
