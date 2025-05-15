@@ -62,7 +62,8 @@ class PostGresAgentTools:
         ]
 
         response = llm.invoke(messages)
+        query = response.content
 
-        return response
+        return query
 
 
