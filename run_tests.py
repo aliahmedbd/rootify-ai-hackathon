@@ -2,28 +2,35 @@ import argparse
 from dotenv import load_dotenv
 from tests.test_report_generator_tools import test_report_generation_tools
 _ = load_dotenv()
- 
-#from tests.test_api import (
-    #test_postgres_create_table,
-   # test_postgres_insert_data,
-  #  test_postgres_query_data,
- #   test_milvus_search
-#)
-#from tests.test_llms import test_postgres_agent_tools
-from tools.report_generator_tools import generate_reports
+
+from tests.test_api import (
+    test_postgres_create_table, 
+    test_postgres_insert_data, 
+    test_postgres_query_data,
+    test_milvus_search,
+    test_postgres_run_query
+)
+from tests.test_llms import (
+    test_postgres_agent_tools,
+    test_vectordb_agent_tools,
+    test_executor_agent_tools
+)
+from tools.generate_report import generate_reports
 from dotenv import load_dotenv
 #from tools.report_generator_tools import generate_reports
 _ = load_dotenv()
  
 # Function map
 FUNCTION_MAP = {
-    "test_report_generation_tools": generate_reports,
-    #"test_postgres_create_table": test_postgres_create_table,
-    #"test_postgres_insert_data": test_postgres_insert_data,
- 
-    #"test_postgres_query_data": test_postgres_query_data,
-    #"test_postgres_agent_tools": test_postgres_agent_tools,
-    #"test_milvus_search": test_milvus_search
+    "test_generate_reports": generate_reports,
+    "test_postgres_create_table": test_postgres_create_table,
+    "test_postgres_insert_data": test_postgres_insert_data,
+    "test_postgres_query_data": test_postgres_query_data,
+    "test_postgres_agent_tools": test_postgres_agent_tools,
+    "test_milvus_search": test_milvus_search,
+    "test_vectordb_agent_tools": test_vectordb_agent_tools,
+    "test_postgres_run_query": test_postgres_run_query,
+    "test_executor_agent_tools": test_executor_agent_tools
 }
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Run specific tests.")

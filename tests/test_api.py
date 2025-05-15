@@ -54,7 +54,7 @@ def test_postgres_create_table():
     """
     pg_connector = PostgresConnector()
     schema = TablesSchema.postgres_metadata_schema
-    pg_connector.create_table(table_name="TEST", schema=schema)
+    pg_connector.create_table(table_name="test2", schema=schema)
 
 
 def test_postgres_insert_data():
@@ -71,7 +71,7 @@ def test_postgres_insert_data():
         "status": "closed",
         "resolutiondate": date.today()
     }
-    pg_connector.insert_data(table_name="TEST", data=data)
+    pg_connector.insert_data(table_name="test2", data=data)
 
 
 def test_postgres_query_data():
@@ -80,6 +80,7 @@ def test_postgres_query_data():
     """
     pg_connector = PostgresConnector()
     query = 'SELECT * FROM "TEST"'
+    query = "SELECT COUNT(*) FROM test2 WHERE status = 'closed';"
     data = pg_connector.query_data(query=query)
     return data
 
@@ -96,4 +97,23 @@ def test_milvus_search():
     for i, res in enumerate(results, 1):
         print(f"\nResult {i}:\n{res.page_content}\n")
 
+    return results
+
+
+def test_postgres_run_query():
+    """
+    Test postgres run query
+    """
+    pg_connector = PostgresConnector()
+    queries = [
+        'SELECT * FROM test2', 
+        'INSERT INTO test2 (id, query, issue, severity, createdate, status, resolutiondate) VALUES (998, \'Test query here\', \'Cannot install\', 3, \'2025-01-03\', \'closed\', \'2023-02-01\')'
+               ]
+    
+    results = []
+    for query in queries:
+        data = pg_connector.run_query(query=query)
+        print(data)
+        results.append(data)
+    
     return results

@@ -81,3 +81,25 @@ class Config:
         },
         "model_id": "mistralai/mistral-large"
     }
+    executor_agent_params = {
+        "model_parameters": {
+            "decoding_method": "greedy",
+            "max_new_tokens": 5000,
+            "min_new_tokens": 1,
+            "temperature": 0.0,
+            "top_k": 50,
+            "top_p": 1,
+        },
+        "model_id": "mistralai/mistral-large"
+    }
+    sql_generator_params = {
+        "model_parameters": {
+            "decoding_method": "greedy",
+            "max_new_tokens": 500,
+            "min_new_tokens": 1,
+            "temperature": 0.0,
+            "top_k": 50,
+            "top_p": 1,
+        },
+        "model_id": "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"
+    }
