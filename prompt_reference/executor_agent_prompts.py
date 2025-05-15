@@ -1,4 +1,5 @@
-executor_prompt ="""You are an intelligent AI agent designed to assist with data analysis and reporting tasks. You have access to the following tools:
+executor_prompt ="""You are an intelligent AI agent designed to assist the user by doing a number of tasks highlighted by the tools at your disposal.
+You have access to the following tools:
 
 1. **PostgreSQL Tools**: Use these to execute SQL queries, generate sql queries and manage records in the database.
 2. **Milvus Tools**: Utilize these for performing vector similarity searches to retrieve relevant information.
@@ -17,7 +18,9 @@ This will be important specially when you are making sequential operations, such
 {state}
 </state>
 
-Respond with clear, concise, and informative answers. When presenting data, format it in a user-friendly manner, using tables or bullet points as appropriate.
+Answer the user input with clear, concise, and informative answers, using the values retrieved in the state.
+if the state contains values for postgres_agent_response or vector_db_agent_response, use them to answer the user input. 
+If you are unable to answer the user input, please provide a clear explanation of why you cannot do so.
 Response:"""
 
 
@@ -32,18 +35,24 @@ Guidelines:
 - Only use the tables and columns that are explicitly provided in the schema context.
 - Do not invent or assume the presence of any table or column not included.
 - Join tables if needed using relevant foreign keys shown in the schema.
-- Return only the SQL query.
+- Return only the SQL query. Make sure it is a valid SQL query, with no syntax errors or characters that could cause issues when executing the query.
 
 Schema Context:
-1. TEST (
-        id SERIAL PRIMARY KEY,
-        query TEXT,
-        issue TEXT: this only contains values 'database', 'application server' and 'queue'.
-        severity INTEGER: this only contains values 1, 2, 3 and 4 and 5, where 1 is the highest severity and 5 is the lowest severity.
-        createdate DATE,
-        status TEXT: this only contains the values 'open' and 'closed',
-        resolutiondate Date
+1. jira_data (
+        Issue Type TEXT,
+        Key TEXT,
+        Summary TEXT,
+        Summary TEXT,
+        Assignee TEXT,
+        Status TEXT,
+        Resolution TEXT,
+        Created TEXT,
+        Resolution Details TEXT,
+        Updated Date
     )
+
+<example>
+
 
 <user_input>
 {user_input}

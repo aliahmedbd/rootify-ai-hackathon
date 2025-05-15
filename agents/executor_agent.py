@@ -21,9 +21,8 @@ class ExecutorAgent(BaseAgent):
 
         # define and bind the tools to the agent.
         self.tools = [
-            PostGresAgentTools.run_query,
+            PostGresAgentTools.generate_run_query,
             vectorDbAgentTools.similarity_search,
-            PostGresAgentTools.generate_sql_query
             ]
 
         # the tools_dict enables the agent to call the tools by name.
@@ -65,24 +64,8 @@ class ExecutorAgent(BaseAgent):
         # check the tool to use.
         selected_tool = state['tool_calls']
         print(f"Calling: {selected_tool}")
-        # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "query_data":
-            # set the input parameters or arguments for the tool.
-            tool_input = {
-                "query": state['postgres_query'],
-                "params": None
-            }
 
-            # invoke the tool and get the result.
-            postgres_agent_response = self.tools_dict[selected_tool].invoke(tool_input)
-
-            # update the state with the tool result.
-            state['postgres_agent_response'] = postgres_agent_response
-            state['memory_chain'].append({
-                'postgres_agent_response': state['postgres_agent_response']
-            })
-
-        elif selected_tool == "similarity_search":
+        if selected_tool == "similarity_search":
             # set the input parameters or arguments for the tool.
             tool_input = {
                 "query": state['user_input'],
@@ -98,7 +81,7 @@ class ExecutorAgent(BaseAgent):
                 'vector_db_agent_response': state['vector_db_agent_response']
             })
 
-        elif selected_tool == "generate_sql_query":
+        elif selected_tool == "generate_run_query":
 
             system_prompt = sql_query_prompt.format(user_input=state['user_input'])
 
@@ -117,9 +100,9 @@ class ExecutorAgent(BaseAgent):
                 sql_query = self.tools_dict[selected_tool].invoke(tool_input)
 
                 # update the state with the tool result.
-                state['postgres_query'] = sql_query
+                state['postgres_agent_response'] = sql_query
                 state['memory_chain'].append({
-                    'postgres_query': state['postgres_query']
+                    'postgres_agent_response': state['postgres_agent_response']
                 })
             except:
                 state['agent_tool_retries'] += 1
@@ -127,13 +110,15 @@ class ExecutorAgent(BaseAgent):
 
         return state
     
-    @staticmethod
-    def router(state: AgentState):
+
+    def router(self, state: AgentState):
         """
         The router function to route the agent to the next step.
         :param state: The state of the agent containing the user input and states to be updated.
         :return: updated state for the agent.
         """
+        print(state)
+        breakpoint()
         # check if the user input is classified as a SQL query or a vector db search.
         if state['agent_tool_retries'] > state['agent_max_tool_retries']:
             # if the agent has retried the tool use more than the max retries, then return the state.
@@ -141,4 +126,4 @@ class ExecutorAgent(BaseAgent):
         elif len(state['postgres_agent_response']) < 1 and len(state['vector_db_agent_response']) < 1:
             return "executor_tools"
         else:
-            return "executor"
+            return self.name
