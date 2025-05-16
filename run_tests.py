@@ -13,12 +13,14 @@ from tests.test_llms import (
     test_vectordb_agent_tools
 )
 from tools.generate_report import generate_reports
+from tools.report_generator_tools import generate_reports
 from dotenv import load_dotenv
 _ = load_dotenv(override=True)
 
 # Function map
 FUNCTION_MAP = {
     "test_generate_reports": generate_reports,
+    "test_report_generation_tools": generate_reports, 
     "test_postgres_create_table": test_postgres_create_table,
     "test_postgres_insert_data": test_postgres_insert_data,
     "test_postgres_query_data": test_postgres_query_data,
