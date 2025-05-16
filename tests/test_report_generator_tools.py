@@ -6,9 +6,9 @@ from tools.report_generatorC_tools import generate_reports
 def test_report_generation_tools():
     # Count the number of issues
      # Count the number of issues
-  query = "SELECT COUNT(*) FROM jira_data"
-  result = generate_reports.invoke({"query": query})
-  print(result)
+  #query = "SELECT COUNT(*) FROM jira_data"
+  #result = generate_reports.invoke({"query": query})
+  #print(result)
 
 # Count the number of issues by status
   query = "SELECT \"Status\", COUNT(*) FROM jira_data GROUP BY \"Status\""
@@ -16,19 +16,19 @@ def test_report_generation_tools():
   print(result)
 
 # Count the number of issues by assignee
-  query = "SELECT \"Assignee\", COUNT(*) FROM jira_data GROUP BY \"Assignee\""
-  result = generate_reports.invoke({"query": query})
-  print(result)
+  #query = "SELECT \"Assignee\", COUNT(*) FROM jira_data GROUP BY \"Assignee\""
+  #result = generate_reports.invoke({"query": query})
+  #print(result)
 
 # Count the number of issues by issue type
-  query = "SELECT \"Issue Type\", COUNT(*) FROM jira_data GROUP BY \"Issue Type\""
-  result = generate_reports.invoke({"query": query})
-  print(result)
+  #query = "SELECT \"Issue Type\", COUNT(*) FROM jira_data GROUP BY \"Issue Type\""
+  #result = generate_reports.invoke({"query": query})
+  #print(result)
 
 # Count the number of issues by reporter
-  query = "SELECT \"Reporter\", COUNT(*) FROM jira_data GROUP BY \"Reporter\""
-  result = generate_reports.invoke({"query": query})
-  print(result)
+  #query = "SELECT \"Reporter\", COUNT(*) FROM jira_data GROUP BY \"Reporter\""
+  #result = generate_reports.invoke({"query": query})
+  #print(result)
 
 
 
