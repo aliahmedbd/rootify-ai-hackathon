@@ -1,10 +1,11 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from connectors.db_connector import PostgresConnector
-
 from pydantic import BaseModel, Field
 from typing import Dict, Union, Any
 from langchain.agents import tool
 from langchain_core.messages import HumanMessage, SystemMessage
-
 
 class PostGresAgentTools:
 
@@ -38,7 +39,7 @@ class PostGresAgentTools:
 
 
     class QueryInput(BaseModel):
-        query:str = Field(description="The SQL query for postgres to run.")
+        query: str = Field(description="The SQL query for postgres to run.")
         params: Any = Field(description="The parameters for the query to configure it/optimise it.")
 
     @tool(args_schema=QueryInput)
