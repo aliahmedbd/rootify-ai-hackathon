@@ -6,9 +6,9 @@ from tools.report_generatorC_tools import generate_reports
 def test_report_generation_tools():
     # Count the number of issues
      # Count the number of issues
-  #query = "SELECT COUNT(*) FROM jira_data"
-  #result = generate_reports.invoke({"query": query})
-  #print(result)
+  query = "SELECT COUNT(*) FROM jira_data"
+  result = generate_reports.invoke({"query": query})
+  print(result)
 
 # Count the number of issues by status
   query = "SELECT \"Status\", COUNT(*) FROM jira_data GROUP BY \"Status\""
