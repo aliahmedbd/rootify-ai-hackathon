@@ -1,6 +1,6 @@
-#import sys
+import sys
 import os
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from prompt_reference.reportgenerate_agent_prompts import reportgenerate_prompt
 from tools.report_generator_tools import generate_reports
 
