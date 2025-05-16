@@ -1,6 +1,7 @@
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#import sys
+#import os
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from connectors.db_connector import PostgresConnector
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,10 +9,11 @@ import seaborn as sns
 from tabulate import tabulate
 from abc import ABC, abstractmethod
 from dotenv import load_dotenv
+from pydantic import BaseModel
+from langchain.tools import tool
 
 load_dotenv()
 
-connector = PostgresConnector()
 class ReportGenerator(ABC):
     @abstractmethod
     def generate_report(self, df):
@@ -90,12 +92,24 @@ class ReportAgent:
         if df is not None:
             for generator in self.report_generators:
                 generator.generate_report(df)
-            print("Reports generated successfully.")
+            return "Reports generated successfully."
         else:
-            print("Failed to generate reports due to a database error.")
+            return "Failed to generate reports due to a database error."
 
-# Example usage
-if __name__ == "__main__":
+class GenerateReportsInput(BaseModel):
+    query: str = "SQL query to fetch data for report generation"
+
+@tool(args_schema=GenerateReportsInput)
+def generate_reports(query: str):
+    """
+    Generates reports based on the provided SQL query.
+
+    Args:
+        query (str): The SQL query to fetch data for report generation.
+
+    Returns:
+        str: A message indicating whether the reports were generated successfully or not.
+    """
     connector = PostgresConnector()
     data_fetcher = DataFetcher(connector)
 
@@ -106,5 +120,4 @@ if __name__ == "__main__":
     report_generators = [html_generator, matplotlib_generator, summary_generator]
     report_agent = ReportAgent(data_fetcher, report_generators)
 
-    query = 'SELECT * FROM "TEST"'
-    report_agent.generate_reports(query)
+    return report_agent.generate_reports(query)
