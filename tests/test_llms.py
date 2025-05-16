@@ -64,55 +64,34 @@ def test_vectordb_agent_tools():
     breakpoint()
 
 
-def test_executor_agent_tools(test_path='milvus'):
+def test_executor_agent_tools():
 
-    if test_path == 'postgres':
-        user_input = "How many records are there in the jira database?"
-        state = AgentState(
-                {
-                    'user_input': user_input,
-                    'supervisor_decision': '',
-                    'tool_calls': '',
-                    'agent_tool_retries':0,
-                    'agent_max_tool_retries': 3,
-                    'postgres_query': '',
-                    'postgres_agent_response': '',
-                    'vector_db_agent_response': '',
-                    'final_response': '',
-                    'memory_chain': []
-                }
-        )
-        executor = ExecutorAgent()
 
-        state = executor.handle_input(state=state)
-        print(state)
-        while len(state['postgres_agent_response']) < 1:
-            breakpoint()
-            state = executor.use_tools(state=state)
-            print("updated state", state)
+    user_input = "How many records are there in the jira database?"
+    state = AgentState(
+            {
+                'user_input': user_input,
+                'supervisor_decision': '',
+                'tool_calls': '',
+                'agent_tool_retries':0,
+                'agent_max_tool_retries': 3,
+                'postgres_query': '',
+                'postgres_agent_response': '',
+                'vector_db_agent_response': '',
+                'final_response': '',
+                'memory_chain': []
+            }
+    )
+    executor = ExecutorAgent()
 
-    elif test_path == 'milvus':
-        user_input = "What technologies are supported for containerized deployment of FCC application?"
-        state = AgentState(
-                {
-                    'user_input': user_input,
-                    'supervisor_decision': '',
-                    'tool_calls': '',
-                    'agent_tool_retries':'',
-                    'agent_max_tool_retries': 3,
-                    'postgres_query': '',
-                    'postgres_agent_response': '',
-                    'vector_db_agent_response': '',
-                    'final_response': '',
-                    'memory_chain': []
-                }
-        )
-        executor = ExecutorAgent()
+    state = executor.handle_input(state=state)
+    print(state)
+    while len(state['postgres_agent_response']) < 1:
+        breakpoint()
+        state = executor.use_tools(state=state)
+        print("updated state", state)
 
-        state = executor.handle_input(state=state)
-        print(state)
-        while len(state['vector_db_agent_response']) < 1:
-            state = executor.use_tools(state=state)
-            print("updated state", state)
+    user_input = "What technologies are supported for containerized deployment of FCC application?"
+ 
 
     breakpoint()
