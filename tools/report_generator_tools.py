@@ -1,4 +1,7 @@
 import os
+#import sys
+#import os
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from connectors.db_connector import PostgresConnector
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -97,7 +100,7 @@ class GenerateReportsInput(BaseModel):
     query: str = "SQL query to fetch data for report generation"
 
 @tool(args_schema=GenerateReportsInput)
-def generate_reports(query: str) -&gt; str:
+def generate_reports(query: str):
     """
     Generates reports based on the provided SQL query.
 
