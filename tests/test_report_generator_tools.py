@@ -1,12 +1,36 @@
-#import sys
+import sys
 import os
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tools.report_generator_tools import generate_reports
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from tools.report_generatorC_tools import generate_reports
 
 def test_report_generation_tools():
-    query = 'SELECT * FROM "TEST"'
-    result = generate_reports.invoke({"query": query})
-    print(result)
+    # Count the number of issues
+     # Count the number of issues
+  query = "SELECT COUNT(*) FROM jira_data"
+  result = generate_reports.invoke({"query": query})
+  print(result)
+
+# Count the number of issues by status
+  query = "SELECT \"Status\", COUNT(*) FROM jira_data GROUP BY \"Status\""
+  result = generate_reports.invoke({"query": query})
+  print(result)
+
+# Count the number of issues by assignee
+  query = "SELECT \"Assignee\", COUNT(*) FROM jira_data GROUP BY \"Assignee\""
+  result = generate_reports.invoke({"query": query})
+  print(result)
+
+# Count the number of issues by issue type
+  query = "SELECT \"Issue Type\", COUNT(*) FROM jira_data GROUP BY \"Issue Type\""
+  result = generate_reports.invoke({"query": query})
+  print(result)
+
+# Count the number of issues by reporter
+  query = "SELECT \"Reporter\", COUNT(*) FROM jira_data GROUP BY \"Reporter\""
+  result = generate_reports.invoke({"query": query})
+  print(result)
+
+
 
 def main():
     test_report_generation_tools()
