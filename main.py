@@ -1,22 +1,22 @@
 from dotenv import load_dotenv
 _ = load_dotenv(override=True)
 
-from graphs.build_graph import build_executor_graph
+from graphs.build_graph import build_general_agent_graph
 
 
 if __name__ == "__main__":
     
-    graph = build_executor_graph()
+    graph = build_general_agent_graph()
 
-    with open("graph_executor.png", "wb") as image_file:
+    with open("general_agent.png", "wb") as image_file:
         image_file.write(graph.get_graph().draw_png())
     
     print("Graph has been built and saved as graph_output.png")
 
     # for vectordb test
     user_input="How many records are there in the jira database?"
-    # for maximo test
-    # user_input = "How many work orders were recorded to have priority 1 in december 31, 1998?"
+    user_input = "What technologies are supported for containerized deployment of FCC application?"
+
     result = graph.invoke(
             {
                     'user_input': user_input,
@@ -31,6 +31,6 @@ if __name__ == "__main__":
                     'memory_chain': []
                 }
         )
-    print(result)
+    print(result['final_response'])
 
     breakpoint()

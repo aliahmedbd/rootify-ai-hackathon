@@ -22,6 +22,8 @@ class AgentState(TypedDict):
     postgres_query: Optional[str] = None
     postgres_agent_response: Optional[str] = None
     vector_db_agent_response: Optional[str] = None
+    report_generation_requested: Optional[str] = None
+    report_generation_response: Optional[str] = None
     final_response: Optional[str] = None
     memory_chain: List[Dict[str, Any]] = []
 

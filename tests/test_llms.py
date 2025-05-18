@@ -1,7 +1,7 @@
 from agents.base_agent import AgentState
 from agents.vector_db_agent import VectorDbAgent
 from agents.postgres_agent import PostGresAgent
-from agents.executor_agent import ExecutorAgent
+from agents.general_agent import ExecutorAgent
 
 
 def test_postgres_agent_tools():
