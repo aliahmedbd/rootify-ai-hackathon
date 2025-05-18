@@ -3,14 +3,14 @@ from dotenv import load_dotenv
 _ = load_dotenv()
 
 import streamlit as st
-from src.build_graph import build_graph
+from graphs.build_graph import build_general_agent_graph
 
 
 # initiate the graph_build
-graph = build_graph()
+graph = build_general_agent_graph()
 
 # Streamlit UI components
-st.title("ITAssist")
+st.title("DevOpsAssist")
 st.sidebar.image('images/Finastra-logo.jpg', use_container_width=True)
 # st.subheader("Agent to Assist you with Maximo Work Orders")
 
@@ -37,11 +37,11 @@ if query:
             {
                 'user_input': query,
                 'supervisor_decision': '',
-                'maximo_payload': '',
                 'tool_calls': '',
-                'agent_tool_retries': 0,
-                'agent_max_tool_retries': 4,
-                'maximo_agent_response': '',
+                'agent_tool_retries':0,
+                'agent_max_tool_retries': 3,
+                'postgres_query': '',
+                'postgres_agent_response': '',
                 'vector_db_agent_response': '',
                 'final_response': '',
                 'memory_chain': []

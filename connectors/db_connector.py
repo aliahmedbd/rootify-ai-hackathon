@@ -1,5 +1,6 @@
 import psycopg
 from psycopg import sql
+from psycopg.rows import dict_row
 import os
 
 class PostgresConnector:
@@ -73,3 +74,19 @@ class PostgresConnector:
         if self.conn:
             self.conn.close()
             print("PostgreSQL database connection closed.")
+
+
+    def run_query(self, query, params=None):
+        try:
+            with self.conn.cursor(row_factory=dict_row) as cur:
+                    cur.execute(query, params or ())
+                    
+                    if cur.description:  # SELECT or RETURNING queries
+                        rows = cur.fetchall()
+                        return {"status": "ok", "type": "select", "data": rows}
+                    else:  # INSERT, UPDATE, DELETE
+                        self.conn.commit()
+                        return {"status": "ok", "type": "write", "rowcount": cur.rowcount}
+                        
+        except Exception as e:
+            return {"status": "error", "error": str(e)}

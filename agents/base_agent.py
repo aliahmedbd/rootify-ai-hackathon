@@ -16,12 +16,14 @@ from langchain_core.messages import SystemMessage, HumanMessage
 class AgentState(TypedDict):
     user_input: str
     supervisor_decision: Optional[str] = None
-    postgres_query: Optional[str] = None
     tool_calls: Optional[str] = None
     agent_tool_retries: Optional[int] = None
     agent_max_tool_retries: Optional[int] = None
+    postgres_query: Optional[str] = None
     postgres_agent_response: Optional[str] = None
     vector_db_agent_response: Optional[str] = None
+    report_generation_requested: Optional[str] = None
+    report_generation_response: Optional[str] = None
     final_response: Optional[str] = None
     memory_chain: List[Dict[str, Any]] = []
 
