@@ -100,13 +100,18 @@ class CombinedReportGenerator(ReportGenerator):
             df (pd.DataFrame): The DataFrame to generate reports from.
             output_file (str): The output file path.
         """
+<<<<<<< HEAD
         template = Template(r"""
+=======
+        template = Template("""
+>>>>>>> b79023f (Combined all reports and tested)
 <html>
 <head>
     <title>Report</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+<<<<<<< HEAD
             background-color: #E6E6FA; /* Background color */
             background-image: url('C:\\Users\\u728383\\Desktop\\devops.jpg'); /* Background image */
             background-size: cover; /* Ensure the background image covers the entire page */
@@ -119,6 +124,8 @@ class CombinedReportGenerator(ReportGenerator):
         }
         h2 {
             font-size: 30px; /* Increase the size of h2 */
+=======
+>>>>>>> b79023f (Combined all reports and tested)
         }
         table {
             border-collapse: collapse;
@@ -128,7 +135,10 @@ class CombinedReportGenerator(ReportGenerator):
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+<<<<<<< HEAD
             font-size: 16px; /* Increase the size of table text */
+=======
+>>>>>>> b79023f (Combined all reports and tested)
         }
         th {
             background-color: #f0f0f0;
@@ -146,6 +156,7 @@ class CombinedReportGenerator(ReportGenerator):
             padding: 6px 12px;
             border: 1px solid #ccc;
             border-top: none;
+<<<<<<< HEAD
             background-color: #FFFFFF; /* Override background color */
             background-image: none; /* Remove background image */
             color: #9400D3; /* Dark violet font color */
@@ -155,6 +166,8 @@ class CombinedReportGenerator(ReportGenerator):
             background-image: none; /* Remove background image */
             color: #9400D3; /* Dark violet font color */
             font-size: 60px; /* Increase font size */
+=======
+>>>>>>> b79023f (Combined all reports and tested)
         }
         .tab {
             overflow: hidden;
@@ -164,12 +177,19 @@ class CombinedReportGenerator(ReportGenerator):
         .tab button {
             background-color: inherit;
             float: left;
+<<<<<<< HEAD
             border: 1px solid purple; /* Purple button border */
+=======
+            border: none;
+>>>>>>> b79023f (Combined all reports and tested)
             outline: none;
             cursor: pointer;
             padding: 14px 16px;
             transition: 0.3s;
+<<<<<<< HEAD
             color: purple; /* Purple button text color */
+=======
+>>>>>>> b79023f (Combined all reports and tested)
         }
         .tab button:hover {
             background-color: #ddd;
@@ -180,7 +200,11 @@ class CombinedReportGenerator(ReportGenerator):
     </style>
 </head>
 <body>
+<<<<<<< HEAD
     <h1>Report</h1>
+=======
+    <h1>Combined Report</h1>
+>>>>>>> b79023f (Combined all reports and tested)
     <div class="tab">
         <button class="tablinks" onclick="openTab(event, 'html-report')">HTML Report</button>
         <button class="tablinks" onclick="openTab(event, 'chart')">Chart</button>
@@ -218,10 +242,13 @@ class CombinedReportGenerator(ReportGenerator):
 </html>
 """)
 
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> b79023f (Combined all reports and tested)
         # Generate reports using the provided generators
         html_report = ''
         summary_report = ''
