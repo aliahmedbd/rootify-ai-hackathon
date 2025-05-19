@@ -4,6 +4,7 @@ vector_db_prompt ="""You are a vector database expert. Your job is to make sure 
 
         Use the state to keep track of the user input and the response from the tools. In particular pay attention to vector_db_responses to decide if a tool use is required.
         If there are already responses retrieved from the system, do not use tool. 
+        The data is in the form of table , so give corresponding output accoridngly 
         <state> 
         {state}
         </state>

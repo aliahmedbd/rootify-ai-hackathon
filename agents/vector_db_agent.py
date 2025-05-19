@@ -6,7 +6,8 @@ from utils.handle_configs import get_llm
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from config import Config
-
+import streamlit as st
+from langgraph.graph import END
 
 class VectorDbAgent(BaseAgent):
     def __init__(self, name="vector_db_agent"):
@@ -52,6 +53,28 @@ class VectorDbAgent(BaseAgent):
 
         return state
     
+    def handle_output(self, state: AgentState):
+        """
+        Takes action based on the state of the agent.
+        :param state: The state of the agent containing the user input and states to be updated.
+        :return: updated state for the agent.
+        """
+
+        # use the tools to get the results and responses before getting back to the supervisor.
+        system_msg = vector_db_prompt.format(state=state)
+        message = [
+            SystemMessage(content=system_msg),
+            HumanMessage(content=f"{state['user_input']}")
+        ]
+        # call the llm with the message
+        agent_response = self.response_agent.invoke(message)
+
+        # update the state with the agent response
+        state['final_response'] = agent_response.content
+        state['memory_chain'].append({
+            'final_response': state['final_response']
+        })
+        return state
 
     def use_vector_db_tools(self, state: AgentState):
         # check the tool to use.
@@ -76,9 +99,14 @@ class VectorDbAgent(BaseAgent):
 
         return state
     
-    # @staticmethod
-    # def router(state: AgentState):
-    #     if len(state['vector_db_agent_response']) < 1:
-    #         return "vector_db_tools"
-    #     else:
-    #         return "supervisor"
+
+    def router(self, state: AgentState):
+        """
+        The router function to route the agent to the next step.
+        :param state: The state of the agent containing the user input and states to be updated.
+        :return: updated state for the agent.
+        """
+        if state['tool_calls'] == "similarity_search":
+            return "vector_search"        
+        else:
+            return END

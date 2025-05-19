@@ -38,7 +38,7 @@ def test_postgres_agent_tools():
 
 def test_vectordb_agent_tools():
 
-    user_input="What technologies are supported for containerized deployment of FCC application??"
+    user_input="which version of jboss supports open jdk 11???"
     # search=""
     state = AgentState(
             {
