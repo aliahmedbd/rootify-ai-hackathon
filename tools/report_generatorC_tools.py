@@ -1,7 +1,7 @@
 import os
-import sys
+#import sys
 #import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from connectors.db_connector import PostgresConnector
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -100,96 +100,100 @@ class CombinedReportGenerator(ReportGenerator):
             df (pd.DataFrame): The DataFrame to generate reports from.
             output_file (str): The output file path.
         """
-<<<<<<< HEAD
         template = Template(r"""
-=======
-        template = Template("""
->>>>>>> b79023f (Combined all reports and tested)
 <html>
 <head>
     <title>Report</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-<<<<<<< HEAD
-            background-color: #E6E6FA; /* Background color */
-            background-image: url('C:\\Users\\u728383\\Desktop\\devops.jpg'); /* Background image */
-            background-size: cover; /* Ensure the background image covers the entire page */
-            background-repeat: no-repeat; /* Prevent the background image from repeating */
-            background-attachment: fixed; /* Make the background image fixed */
-            font-size: 18px; /* Increase the font size for the entire body */
+            font-family: 'Roboto', sans-serif;
+            background-color: #E6E6FA;
+            background-image: url('C:\\Users\\u728383\\Desktop\\devops.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-size: 18px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         h1 {
-            font-size: 36px; /* Increase the size of h1 */
+            font-size: 48px;
+            color: #4B0082;
+            text-align: center;
+            margin-top: 20px;
         }
         h2 {
-            font-size: 30px; /* Increase the size of h2 */
-=======
->>>>>>> b79023f (Combined all reports and tested)
+            font-size: 36px;
+            color: #4B0082;
+            margin-bottom: 10px;
         }
         table {
             border-collapse: collapse;
             width: 100%;
+            margin-bottom: 20px;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
             text-align: left;
-<<<<<<< HEAD
-            font-size: 16px; /* Increase the size of table text */
-=======
->>>>>>> b79023f (Combined all reports and tested)
+            font-size: 18px;
         }
         th {
             background-color: #f0f0f0;
+            color: #4B0082;
         }
         img {
-            width: 100%;
+            max-width: 100%;
             height: auto;
+            display: block;
+            margin: 0 auto;
         }
         pre {
             white-space: pre-wrap;
             word-wrap: break-word;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            color: #4B0082;
         }
         .tabcontent {
             display: none;
-            padding: 6px 12px;
+            padding: 20px;
             border: 1px solid #ccc;
             border-top: none;
-<<<<<<< HEAD
-            background-color: #FFFFFF; /* Override background color */
-            background-image: none; /* Remove background image */
-            color: #9400D3; /* Dark violet font color */
+            background: linear-gradient(to right, #E6E6FA, #D8BFD8);
+            color: #4B0082;
+            box-sizing: border-box;
+            flex: 1;
+            overflow-y: auto;
         }
         #summary-report {
-            background-color: #FFFFFF; /* Override background color */
-            background-image: none; /* Remove background image */
-            color: #9400D3; /* Dark violet font color */
-            font-size: 60px; /* Increase font size */
-=======
->>>>>>> b79023f (Combined all reports and tested)
+            background: linear-gradient(to right, #E6E6FA, #D8BFD8);
+            color: #4B0082;
+            font-size: 24px;
+            flex: 1;
+            overflow-y: auto;
         }
         .tab {
             overflow: hidden;
             border: 1px solid #ccc;
             background-color: #f1f1f1;
+            margin-bottom: 20px;
         }
         .tab button {
             background-color: inherit;
             float: left;
-<<<<<<< HEAD
-            border: 1px solid purple; /* Purple button border */
-=======
-            border: none;
->>>>>>> b79023f (Combined all reports and tested)
+            border: 1px solid #4B0082;
             outline: none;
             cursor: pointer;
             padding: 14px 16px;
             transition: 0.3s;
-<<<<<<< HEAD
-            color: purple; /* Purple button text color */
-=======
->>>>>>> b79023f (Combined all reports and tested)
+            color: #4B0082;
+            font-size: 18px;
         }
         .tab button:hover {
             background-color: #ddd;
@@ -197,14 +201,51 @@ class CombinedReportGenerator(ReportGenerator):
         .tab button.active {
             background-color: #ccc;
         }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            h1 {
+                font-size: 36px;
+            }
+            h2 {
+                font-size: 28px;
+            }
+            th, td {
+                font-size: 16px;
+                padding: 10px;
+            }
+            .tab button {
+                font-size: 16px;
+                padding: 12px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            h2 {
+                font-size: 24px;
+            }
+            th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+            .tab button {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+        }
     </style>
 </head>
 <body>
-<<<<<<< HEAD
     <h1>Report</h1>
-=======
-    <h1>Combined Report</h1>
->>>>>>> b79023f (Combined all reports and tested)
     <div class="tab">
         <button class="tablinks" onclick="openTab(event, 'html-report')">HTML Report</button>
         <button class="tablinks" onclick="openTab(event, 'chart')">Chart</button>
@@ -241,14 +282,6 @@ class CombinedReportGenerator(ReportGenerator):
 </body>
 </html>
 """)
-
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> b79023f (Combined all reports and tested)
         # Generate reports using the provided generators
         html_report = ''
         summary_report = ''
@@ -318,4 +351,3 @@ def generate_reports(query: str):
     report_agent = ReportAgent(data_fetcher, report_generators, combined_report_generator)
 
     return report_agent.generate_reports(query)
-
