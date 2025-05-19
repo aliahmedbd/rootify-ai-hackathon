@@ -4,8 +4,7 @@ _ = load_dotenv(override=True)
 from graphs.build_graph import build_general_agent_graph
 
 
-if __name__ == "__main__":
-    
+def test_general_agent():
     graph = build_general_agent_graph()
 
     with open("general_agent.png", "wb") as image_file:
@@ -34,3 +33,9 @@ if __name__ == "__main__":
     print(result['final_response'])
 
     breakpoint()
+
+    
+
+if __name__ == "__main__":
+    
+    test_general_agent()
