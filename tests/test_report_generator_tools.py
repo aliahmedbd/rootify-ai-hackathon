@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tools.report_generatorC_tools import generate_reports
+from tools.report_generator_updated_tools import generate_reports
 
 def test_report_generation_tools():
     # Count the number of issues

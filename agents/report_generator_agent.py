@@ -1,5 +1,5 @@
 from prompt_reference.reportgenerate_agent_prompts import reportgenerate_prompt
-from tools.report_generator_tools import generate_reports
+from tools.report_generator_tools import generate_reports, generate_query, run_query 
 
 from agents.base_agent import BaseAgent, AgentState
 from utils.handle_configs import get_llm
@@ -20,12 +20,16 @@ class ReportGeneratorAgent(BaseAgent):
         # define and bind the tools to the agent.
         self.tools = [
             generate_reports,
+            generate_query,
+            run_query,
             ]
 
         # the tools_dict enables the agent to call the tools by name.
         self.tools_dict = {t.name: t for t in self.tools}
         self.llm_with_tools = self.llm.bind_tools(self.tools)        
-
+        # define the agent for output handling.
+        self.response_agent = Config.general_agent_response_params
+        self.response_agent = get_llm(self.response_agent)
 
     def handle_input(self, state: AgentState):
         """
@@ -52,7 +56,28 @@ class ReportGeneratorAgent(BaseAgent):
                 pass
 
         return state
-    
+    def handle_output(self, state: AgentState):
+        """
+        Takes action based on the state of the agent.
+        :param state: The state of the agent containing the user input and states to be updated.
+        :return: updated state for the agent.
+        """
+
+        # use the tools to get the results and responses before getting back to the supervisor.
+        system_msg = reportgenerate_prompt.format(state=state)
+        message = [
+            SystemMessage(content=system_msg),
+            HumanMessage(content=f"{state['user_input']}")
+        ]
+        # call the llm with the message
+        agent_response = self.response_agent.invoke(message)
+
+        # update the state with the agent response
+        state['final_response'] = agent_response.content
+        state['memory_chain'].append({
+            'final_response': state['final_response']
+        })
+        return state
 
     def use_tools(self, state: AgentState):
         # check the tool to use.
@@ -75,3 +100,4 @@ class ReportGeneratorAgent(BaseAgent):
             })
 
         return state
+    
