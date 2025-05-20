@@ -1,4 +1,5 @@
-from prompt_reference.general_agent_prompts import general_prompt, sql_query_prompt
+from prompt_reference.general_agent_prompts import general_prompt
+from prompt_reference.postgres_agent_prompts import sql_query_prompt
 from tools.postgres_agent_tools import PostGresAgentTools
 from tools.vector_db_tools import vectorDbAgentTools
 

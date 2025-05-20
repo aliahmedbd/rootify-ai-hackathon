@@ -1,7 +1,7 @@
 from agents.base_agent import AgentState
 from agents.vector_db_agent import VectorDbAgent
 from agents.postgres_agent import PostGresAgent
-from agents.general_agent import ExecutorAgent
+from agents.general_agent import GeneralAgent
 
 
 def test_postgres_agent_tools():
@@ -82,7 +82,7 @@ def test_executor_agent_tools():
                 'memory_chain': []
             }
     )
-    executor = ExecutorAgent()
+    executor = GeneralAgent()
 
     state = executor.handle_input(state=state)
     print(state)

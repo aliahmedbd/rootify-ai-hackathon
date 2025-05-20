@@ -8,7 +8,9 @@ from tests.test_api import (
     test_postgres_insert_data, 
     test_postgres_query_data,
     test_milvus_search,
-    test_postgres_run_query
+    test_postgres_run_query,
+    test_postgres_list_table_schemas,
+    test_validate_with_pglast
 )
 from tests.test_llms import (
     test_postgres_agent_tools,
@@ -30,7 +32,9 @@ FUNCTION_MAP = {
     "test_milvus_search": test_milvus_search,
     "test_vectordb_agent_tools": test_vectordb_agent_tools,
     "test_postgres_run_query": test_postgres_run_query,
-    "test_executor_agent_tools": test_executor_agent_tools
+    "test_executor_agent_tools": test_executor_agent_tools,
+    "test_postgres_list_table_schemas": test_postgres_list_table_schemas,
+    "test_validate_with_pglast": test_validate_with_pglast,
 }
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Run specific tests.")

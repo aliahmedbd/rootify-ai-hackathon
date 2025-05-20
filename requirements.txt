@@ -22,3 +22,4 @@ psycopg2
 pygraphviz
 matplotlib
 seaborn
+pglast

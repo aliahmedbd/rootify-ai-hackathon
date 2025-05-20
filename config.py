@@ -112,5 +112,5 @@ class Config:
             "top_k": 50,
             "top_p": 1,
         },
-        "model_id": "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"
+        "model_id": "mistralai/mistral-large"
     }

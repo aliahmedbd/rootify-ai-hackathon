@@ -1,6 +1,7 @@
 import psycopg
 from psycopg import sql
 from psycopg.rows import dict_row
+from pglast import parse_sql, Error
 import os
 
 class PostgresConnector:
@@ -77,6 +78,12 @@ class PostgresConnector:
 
 
     def run_query(self, query, params=None):
+        """
+        Run a SQL query on the PostgreSQL database.
+        :param query: The SQL query to execute.
+        :param params: Optional parameters for the query.
+        :return: A dictionary containing the status and result of the query.
+        """
         try:
             with self.conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(query, params or ())
@@ -90,3 +97,51 @@ class PostgresConnector:
                         
         except Exception as e:
             return {"status": "error", "error": str(e)}
+        
+    
+    def list_table_schemas(self):
+        """
+        List all tables and their schemas in the database.
+        """
+        with self.conn.cursor(row_factory=dict_row) as cur:
+            cur.execute("""
+                SELECT table_name, column_name, data_type
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                ORDER BY table_name, ordinal_position;
+                """)
+
+            # Fetch all results
+            results = cur.fetchall()
+
+            # Format the results
+            formatted_results = {}
+            for row in results:
+                table_name = row['table_name']
+                column_name = row['column_name']
+                data_type = row['data_type']
+
+                if table_name not in formatted_results:
+                    formatted_results[table_name] = []
+
+                formatted_results[table_name].append({
+                    'column_name': column_name,
+                    'data_type': data_type
+                })
+
+            return results
+    
+
+    def validate_with_pglast(self, sql: str) -> bool:
+        """
+        Validate SQL syntax using pglast.
+        :param sql: The SQL query to validate.
+        :return: True if valid, False otherwise.
+        """
+        # Check if the SQL query is empty
+        try:
+            parse_sql(sql)
+            return True
+        except Error as e:
+            print("Syntax error:", e)
+            return False

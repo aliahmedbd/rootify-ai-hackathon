@@ -117,3 +117,46 @@ def test_postgres_run_query():
         results.append(data)
     
     return results
+
+
+def test_postgres_list_table_schemas():
+    """
+    Test postgres list table schemas
+    """
+    pg_connector = PostgresConnector()
+    schemas = pg_connector.list_table_schemas()
+    print(schemas)
+
+    return schemas
+
+def test_validate_with_pglast():
+    """
+    Test validate with pglast
+    """
+    pg_connector = PostgresConnector()
+    sql = 'SELECT * FROM jira_data'
+    is_valid = pg_connector.validate_with_pglast(sql=sql)
+    if is_valid:
+        print(f"{sql} is valid SQL.")
+    else:
+        print(f"{sql} is not valid SQL.")
+    
+
+    # What was the latest Jira ticket that was created?
+    sql2 = """```sql
+            SELECT * FROM jira_data ORDER BY "Created" DESC LIMIT 1;
+            ```"""
+    is_valid = pg_connector.validate_with_pglast(sql=sql2)
+    if is_valid:
+        print(f"{sql2} is valid SQL.")
+    else:
+        print(f"{sql2} is not valid SQL.")
+
+    sql3 = 'SELECT * FROM jira_data WHERE id = 1 AND status = "open"'
+    is_valid = pg_connector.validate_with_pglast(sql=sql3)
+    if is_valid:
+        print(f"{sql3} is valid SQL.")
+    else:
+        print(f"{sql3} is not valid SQL.")
+    
+    breakpoint()

@@ -7,7 +7,9 @@ from graphs.build_graph import build_general_agent_graph
 
 
 # initiate the graph_build
+print("Building the graph...")
 graph = build_general_agent_graph()
+print("Graph has been built.")
 
 # Streamlit UI components
 st.title("DevOpsAssist")
