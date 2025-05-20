@@ -6,6 +6,8 @@ import os
 from langgraph.graph import StateGraph
 from agents.base_agent import AgentState 
 from agents.report_generator_agent import ReportGeneratorAgent
+
+
 def build_report_generator_graph():
     graph = StateGraph(AgentState)
     agent = ReportGeneratorAgent()

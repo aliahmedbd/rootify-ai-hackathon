@@ -34,8 +34,16 @@ def test_general_agent():
 
     breakpoint()
 
+
+def test_report_generator_agent():
+    graph = build_report_generator_graph()
+
+    with open("report_generator_agent.png", "wb") as image_file:
+        image_file.write(graph.get_graph().draw_png())
+    
+    print("Graph has been built and saved as report_generator_agent.png")
     
 
 if __name__ == "__main__":
     
-    test_general_agent()
+    test_report_generator_agent()

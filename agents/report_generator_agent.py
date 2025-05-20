@@ -1,5 +1,6 @@
 from prompt_reference.reportgenerate_agent_prompts import reportgenerate_prompt
-from tools.report_generator_tools import generate_reports, generate_query, run_query 
+from tools.report_generator_updated_tools import generate_reports
+from tools.postgres_agent_tools import PostGresAgentTools
 
 from agents.base_agent import BaseAgent, AgentState
 from utils.handle_configs import get_llm

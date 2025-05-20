@@ -70,7 +70,7 @@ class Config:
         },
         "model_id": "mistralai/mistral-large"
     }
-    reportgenerate_agent_params = {
+    report_generator_agent_params = {
         "model_parameters": {
             "decoding_method": "greedy",
             "max_new_tokens": 3000,
