@@ -5,10 +5,10 @@ from pyppeteer import launch
 from dotenv import load_dotenv
 _ = load_dotenv(override=True)
 
-from graphs.build_graph import build_general_agent_graph, build_general_agent_graph_with_report
+from graphs.build_graph import build_general_agent_graph_with_report
 #from graphs.build_graph import build_general_agent_graph
 from graphs.repor_generator_graph import build_report_generator_graph
-
+from graphs.vector_db_agent_graph import vector_db_agent_graph
 
 # def test_general_agent():
 #     graph = build_general_agent_graph()
@@ -90,6 +90,32 @@ def test_report_generator_agent():
     #    image_file.write(graph.get_graph().draw_png())
          graph.get_graph().draw_mermaid_png(output_file_path="graph.png", draw_method=MermaidDrawMethod.PYPPETEER) 
     print("Graph has been built and saved as report_generator_agent.png")
+    
+def test_vector_agent():
+    graph = vector_db_agent_graph()
+
+    with open("graph_postgres.png", "wb") as image_file:
+        image_file.write(graph.get_graph().draw_png())
+    
+    print("Graph has been built and saved as graph_output.png")
+
+    # for vectordb test
+    # user_input="How many records are there in the jira database?"
+    user_input = "Which version of JBoss supports open jdk 11?"
+
+    result = graph.invoke(
+            {
+                    'user_input': user_input,
+                    'supervisor_decision': '',
+                    'tool_calls': '',
+                    'agent_tool_retries':0,
+                    'agent_max_tool_retries': 3,
+                    'vector_db_agent_response': '',
+                    'final_response': '',
+                    'memory_chain': []
+                }
+        )
+    print(result['final_response'])
     
 
 if __name__ == "__main__":

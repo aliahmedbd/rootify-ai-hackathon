@@ -25,8 +25,10 @@ class VectorDbAgent(BaseAgent):
 
         # the tools_dict enables the agent to call the tools by name.
         self.tools_dict = {t.name: t for t in self.tools}
-        self.llm_with_tools = self.llm.bind_tools(self.tools)        
-
+        self.llm_with_tools = self.llm.bind_tools(self.tools)    
+            
+        self.response_agent = Config.vector_db_agent_params
+        self.response_agent = get_llm(self.response_agent)
 
     def handle_input(self, state: AgentState):
         """
@@ -43,6 +45,7 @@ class VectorDbAgent(BaseAgent):
         ]
         # call the llm with the message
         agent_response = self.llm_with_tools.invoke(message)
+
 
         # update the state with the agent response
         if hasattr(agent_response, 'tool_calls'):

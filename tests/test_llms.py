@@ -61,6 +61,8 @@ def test_vectordb_agent_tools():
 
     state = vector_db_agent.use_vector_db_tools(state=state)
     print("post tool use state \n", state)
+    state = vector_db_agent.handle_output(state=state)
+    print('after handle output calling:',state)
     breakpoint()
 
 

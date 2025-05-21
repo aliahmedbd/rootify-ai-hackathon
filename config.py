@@ -57,7 +57,7 @@ class Config:
             "top_k": 50,
             "top_p": 1,
         },
-        "model_id": "ibm/granite-3-8b-instruct"
+        "model_id": "mistralai/mistral-large"
     }
     postgres_agent_params = {
         "model_parameters": {

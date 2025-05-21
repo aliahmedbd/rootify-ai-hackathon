@@ -44,7 +44,7 @@ def build_supervisor_graph():
     return graph.compile()
 
 
-def vector_db_agent_grap():
+def vector_db_agent_graph():
     graph = StateGraph(AgentState)
 
     agent = VectorDbAgent()
@@ -55,18 +55,19 @@ def vector_db_agent_grap():
     graph.add_node("handle_response", agent.handle_output)
 
     # add edges and conditional edges (requires a router function that does not return the state)
-    graph.add_conditional_edges(
-        agent.name,
-        agent.router,
-        {
-            "vector_search": "vector_search",
-            "handle_response": "handle_response",
-            END: END
-        }
-    )
+    # graph.add_conditional_edges(
+    #     agent.name,
+    #     agent.router,
+    #     {
+    #         "vector_search": "vector_search",
+    #         "handle_response": "handle_response",
+    #         END: END
+    #     }
+    # )
     # add edges
+    graph.add_edge(agent.name, "vector_search")
     graph.add_edge("vector_search", "handle_response")
-    graph.add_edge("run_query", "handle_response")
+    # graph.add_edge("run_query", "handle_response")
     
     # set entry and finish points
     graph.set_entry_point(agent.name)
