@@ -25,7 +25,6 @@ class ReportGeneratorAgent(BaseAgent):
             generate_reports,
             PostGresAgentTools.generate_query,
             PostGresAgentTools.run_query,
-            
             ]
 
         # the tools_dict enables the agent to call the tools by name.
@@ -102,7 +101,7 @@ class ReportGeneratorAgent(BaseAgent):
             report_generator_response = self.tools_dict[selected_tool].invoke(tool_input)
 
             # update the state with the tool result.
-            state['report_generator_response'] = report_generator_response
+            state['report_generation_response'] = report_generator_response
             state['memory_chain'].append({
                 'report_generator_response': state['report_generator_response']
             })

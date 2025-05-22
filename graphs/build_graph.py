@@ -87,3 +87,51 @@ def build_general_agent_graph():
     graph.set_finish_point(agent.name)
 
     return graph.compile()
+
+
+def build_general_agent_graph_with_report():
+    graph = StateGraph(AgentState)
+
+    agent = GeneralAgent()
+
+    # Add nodes to  the graph
+    graph.add_node(agent.name, agent.handle_input)
+    graph.add_node("generate_sql_query", agent.generate_sql_query)
+    graph.add_node("vector_search", agent.vector_search)
+    graph.add_node("run_query", agent.run_sql_query)
+    graph.add_node("generate_report", agent.generate_report)
+    graph.add_node("handle_response", agent.handle_output)
+
+    # add edges and conditional edges (requires a router function that does not return the state)
+    graph.add_conditional_edges(
+        agent.name,
+        agent.router,
+        {
+            "generate_sql_query": "generate_sql_query",
+            "vector_search": "vector_search",
+            "generate_report": "generate_sql_query",
+            END: END
+        }
+    )
+
+    # add edges for sub tasks with postgres queries and report generation.
+    graph.add_edge("generate_sql_query", "run_query")
+    graph.add_conditional_edges(
+        "run_query",
+        agent.router_2,
+        {
+            "generate_report": "generate_report",
+            "handle_response": "handle_response"
+        }
+    )
+
+    # add edges for sub tasks with vector search.
+    graph.add_edge("vector_search", "handle_response")
+
+    # set entry and finish points
+    graph.set_entry_point(agent.name)
+    graph.set_finish_point(agent.name)
+
+    return graph.compile()
+    
+    

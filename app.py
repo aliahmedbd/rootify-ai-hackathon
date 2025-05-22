@@ -3,12 +3,12 @@ from dotenv import load_dotenv
 _ = load_dotenv()
 
 import streamlit as st
-from graphs.build_graph import build_general_agent_graph
+from graphs.build_graph import build_general_agent_graph, build_general_agent_graph_with_report
 
 
 # initiate the graph_build
 print("Building the graph...")
-graph = build_general_agent_graph()
+graph = build_general_agent_graph_with_report()
 print("Graph has been built.")
 
 # Streamlit UI components
@@ -45,6 +45,8 @@ if query:
                 'postgres_query': '',
                 'postgres_agent_response': '',
                 'vector_db_agent_response': '',
+                'report_generation_requested': '',
+                'report_generation_response': '',
                 'final_response': '',
                 'memory_chain': []
             }

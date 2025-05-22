@@ -1,5 +1,6 @@
 from prompt_reference.general_agent_prompts import general_prompt
 from prompt_reference.postgres_agent_prompts import sql_query_prompt
+from tools.report_generator_updated_tools import generate_reports
 from tools.postgres_agent_tools import PostGresAgentTools
 from tools.vector_db_tools import vectorDbAgentTools
 
@@ -26,6 +27,7 @@ class GeneralAgent(BaseAgent):
             PostGresAgentTools.generate_query,
             PostGresAgentTools.run_query,
             vectorDbAgentTools.similarity_search,
+            generate_reports,
             ]
 
         # the tools_dict enables the agent to call the tools by name.
@@ -43,7 +45,7 @@ class GeneralAgent(BaseAgent):
 
     def handle_input(self, state: AgentState):
         """
-        Takes action based on the state of the agent.
+        Selects the correct tool to use for the user input or ask.
         :param state: The state of the agent containing the user input and states to be updated.
         :return: updated state for the agent.
         """
@@ -91,6 +93,26 @@ class GeneralAgent(BaseAgent):
             'final_response': state['final_response']
         })
         return state
+    
+    def generate_report(self, state: AgentState):
+        # check the tool to use.
+        selected_tool = state['tool_calls']
+        print(f"Calling: {selected_tool}")
+        # invoke the tools and udpate the states depending on the tool use.
+        if selected_tool == "generate_reports":
+            # set the input parameters or arguments for the tool.
+            tool_input = {
+                "query": state['postgres_query']
+            }
+
+            # invoke the tool and get the result.
+            report_generator_response = self.tools_dict[selected_tool].invoke(tool_input)
+
+            # update the state with the tool result.
+            state['report_generation_response'] = report_generator_response
+            state['memory_chain'].append({
+                'report_generator_response': state['report_generator_response']
+            })
     
 
     def vector_search(self, state: AgentState):
@@ -186,6 +208,23 @@ class GeneralAgent(BaseAgent):
             return "generate_sql_query"
         # if the agent has decided to do a similarity search, we will call the vector db search tool.    
         elif state['tool_calls'] == "similarity_search":
-            return "vector_search"        
+            return "vector_search"
+        elif state['tool_calls'] == "generate_reports":
+            return "generate_report"      
         else:
             return END
+
+    def router_2(self, state: AgentState):
+        """
+        The router function to route the agent to the next step.
+        :param state: The state of the agent containing the user input and states to be updated.
+        :return: updated state for the agent.
+        """
+        # If the agent has decided to generate a SQL query, we will call the sql query generation tool.
+        if "generate report" in state['user_input'].lower():
+            return "generate_report"
+        # if the agent has decided to do a similarity search, we will call the vector db search tool.    
+        else:
+            return "handle_response"
+        
+    
