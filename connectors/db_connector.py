@@ -2,6 +2,7 @@ import psycopg
 from psycopg import sql
 from psycopg.rows import dict_row
 from pglast import parse_sql, Error
+from typing import Dict, Union, Any
 import os
 
 class PostgresConnector:
@@ -24,7 +25,19 @@ class PostgresConnector:
         except psycopg.Error as e:
             print(f"Error connecting to PostgreSQL database: {e}")
             raise
-
+    def get_table_schemas(self, table_name: str) -> Dict[str, Any]:
+        """
+        Get the schemas of all tables in the PostgreSQL database.
+        """  
+        with self.conn.cursor() as cur:
+                cur.execute("""
+                    SELECT table_name, column_name, data_type
+                    FROM information_schema.columns
+                    WHERE table_schema = 'public'
+                    ORDER BY table_name, ordinal_position;
+                """)
+                rows = cur.fetchall()
+                return rows
     def create_table(self, table_name, schema):
         """
         Create a sample table with specified name.

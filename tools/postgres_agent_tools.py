@@ -64,3 +64,12 @@ class PostGresAgentTools:
             }
         
         return response
+    def get_table_schemas(self, table_name: str) -> Dict[str, Any]:
+        """
+        Get the schema of a table in the database.
+        :param table_name: The name of the table to get the schema for.
+        :return: A dictionary containing the schema of the table.
+        """
+        pg_connector = PostgresConnector()
+        response = pg_connector.get_table_schema(table_name=table_name)
+        return response
