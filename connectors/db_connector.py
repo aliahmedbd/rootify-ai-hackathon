@@ -50,7 +50,8 @@ class PostgresConnector:
                 current_table = table
             schemas_text += f"  Column: {column}, Type: {data_type}\n"
         return schemas_text
-
+    
+        #return results
     def create_table(self, table_name, schema):
         """
         Create a sample table with specified name.
