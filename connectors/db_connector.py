@@ -52,6 +52,7 @@ class PostgresConnector:
         return schemas_text
     
         #return results
+
     def create_table(self, table_name, schema):
         """
         Create a sample table with specified name.
