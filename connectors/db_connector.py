@@ -1,10 +1,7 @@
 import psycopg
 from psycopg import sql
 from psycopg.rows import dict_row
-<<<<<<< HEAD
 from pglast import parse_sql, Error
-=======
->>>>>>> 007fbf1 (Getting all the schema name from tabel)
 from typing import Dict, Union, Any
 import os
 
