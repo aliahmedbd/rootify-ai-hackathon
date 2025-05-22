@@ -95,4 +95,3 @@ class PostGresAgentTools:
         pg_connector = PostgresConnector()
         response = pg_connector.validate_with_pglast_Latest(query=query, params=params)
         return response
-

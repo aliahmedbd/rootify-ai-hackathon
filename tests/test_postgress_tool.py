@@ -3,6 +3,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from tools.postgres_agent_tools import PostGresAgentTools
 #from tools.postgres_agent_tools import get_table_schemas
+from tools.postgres_agent_tools import get_table_schemas
 from connectors.db_connector import PostgresConnector   
 
 def test_postgres_tool():
@@ -17,3 +18,4 @@ def test_postgres_tool():
     schemas = pg_connector.get_table_schemas("jira_data")
     print(schemas)
     #assert isinstance(schemas, list), "Failed to get table schemas"
+    assert isinstance(schemas, list), "Failed to get table schemas"

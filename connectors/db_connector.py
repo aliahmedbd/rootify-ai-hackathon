@@ -26,8 +26,8 @@ class PostgresConnector:
         except psycopg.Error as e:
             print(f"Error connecting to PostgreSQL database: {e}")
             raise
-
-    def get_table_schemas(self) -> Dict[str, Any]:
+        
+    def get_table_schemas(self, table_name: str) -> Dict[str, Any]:
         """
         Get the schemas of all tables in the PostgreSQL database.
         """  
@@ -50,7 +50,7 @@ class PostgresConnector:
                 current_table = table
             schemas_text += f"  Column: {column}, Type: {data_type}\n"
         return schemas_text
-        #return results
+
     def create_table(self, table_name, schema):
         """
         Create a sample table with specified name.
@@ -171,6 +171,7 @@ class PostgresConnector:
         except Error as e:
             print("Syntax error:", e)
             return False
+        
     @staticmethod
     def validate_with_pglast_Latest(sql: str):
         """
