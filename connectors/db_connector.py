@@ -51,10 +51,6 @@ class PostgresConnector:
             schemas_text += f"  Column: {column}, Type: {data_type}\n"
         return schemas_text
         #return results
-<<<<<<< HEAD
-
-=======
->>>>>>> 154879e (modified script to come schemas name as text)
     def create_table(self, table_name, schema):
         """
         Create a sample table with specified name.

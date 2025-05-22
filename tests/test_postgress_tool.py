@@ -17,9 +17,3 @@ def test_postgres_tool():
     schemas = pg_connector.get_table_schemas("jira_data")
     print(schemas)
     #assert isinstance(schemas, list), "Failed to get table schemas"
-
-def main():
-    test_postgres_tool()
-
-if __name__ == "__main__":
-    main()
