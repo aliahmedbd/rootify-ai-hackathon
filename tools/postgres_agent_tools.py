@@ -64,11 +64,17 @@ class PostGresAgentTools:
             }
         
         return response
+<<<<<<< HEAD
     
     class GetTableSchemas(BaseModel):
         table_name: str = Field(description="The name of the table to get the schema for.")
         params: Any = Field(description="The parameters for the query to configure it/optimise it.")
     
+=======
+    class GetTableSchemas(BaseModel):
+        table_name: str = Field(description="The name of the table to get the schema for.")
+        params: Any = Field(description="The parameters for the query to configure it/optimise it.")
+>>>>>>> ea91504 (Updating the tools)
     @tool(args_schema=GetTableSchemas)
     def get_table_schemas(self, table_name: str) -> Dict[str, Any]:
         """
