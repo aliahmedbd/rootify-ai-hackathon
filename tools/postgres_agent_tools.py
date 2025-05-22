@@ -64,7 +64,7 @@ class PostGresAgentTools:
             }
         
         return response
-    
+
     class GetTableSchemas(BaseModel):
         table_name: str = Field(description="The name of the table to get the schema for.")
         params: Any = Field(description="The parameters for the query to configure it/optimise it.")
