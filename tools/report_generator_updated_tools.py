@@ -305,7 +305,7 @@ class GenerateReportsInput(BaseModel):
 
 
 @tool(args_schema=GenerateReportsInput)
-def generate_reports(query: str):
+def generate_reports_tools(query: str):
     
     """
     This function generates reports based on the provided input data.
@@ -321,8 +321,8 @@ def generate_reports(query: str):
     report_generators = [html_generator, matplotlib_generator, summary_generator]
     combined_report_generator = CombinedReportGenerator(report_generators)
     report_agent = ReportAgent(data_fetcher, report_generators, combined_report_generator)
-
-    return report_agent.generate_reports(query)
+    report_agent.generate_reports(query)
+    return "Report Generated"
 
 class GenerateSQLQuery(BaseModel):
     user_input: str = Field(description="The user input to be translated to SQL query to run.")

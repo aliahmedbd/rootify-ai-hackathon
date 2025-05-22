@@ -1,5 +1,6 @@
 from prompt_reference.reportgenerate_agent_prompts import reportgenerate_prompt
-from tools.report_generator_updated_tools import generate_reports
+from prompt_reference.postgres_agent_prompts import sql_query_prompt
+from tools.report_generator_updated_tools import generate_reports_tools
 from tools.postgres_agent_tools import PostGresAgentTools
 
 from agents.base_agent import BaseAgent, AgentState
@@ -8,7 +9,6 @@ from utils.handle_configs import get_llm
 from langchain_core.messages import HumanMessage, SystemMessage
 from config import Config
 from tools.postgres_agent_tools import PostGresAgentTools
-from prompt_reference.general_agent_prompts import general_prompt, sql_query_prompt
 
 
 class ReportGeneratorAgent(BaseAgent):
@@ -22,7 +22,7 @@ class ReportGeneratorAgent(BaseAgent):
 
         # define and bind the tools to the agent.
         self.tools = [
-            generate_reports,
+            generate_reports_tools,
             PostGresAgentTools.generate_query,
             PostGresAgentTools.run_query,
             ]
@@ -45,24 +45,41 @@ class ReportGeneratorAgent(BaseAgent):
         :return: updated state for the agent.
         """
 
+        # Print the initial state for debugging
+        print("Initial state:", state)
+
         # use the tools to get the results and responses before getting back to the supervisor.
-        system_msg = reportgenerate_prompt.format(state=state)
+        system_msg = reportgenerate_prompt.format(user_input=state['user_input'])
         message = [
             SystemMessage(content=system_msg),
             HumanMessage(content=f"{state['user_input']}")
         ]
+
+        # Print the message for debugging
+        print("Message to LLM:", message)
+
         # call the llm with the message
         agent_response = self.llm_with_tools.invoke(message)
+
+        # Print the agent response for debugging
+        print("Agent response:", agent_response)
 
         # update the state with the agent response
         if hasattr(agent_response, 'tool_calls'):
             try:
                 state['tool_calls'] = agent_response.tool_calls[0]['name']
-                state['query'] = agent_response.tool_calls[0]['args']['query']
-            except IndexError:
+                state['memory_chain'].append({
+                'selected_tool': state['tool_calls']
+                })
+            except IndexError as e:
+                print(f"IndexError: {e}")
                 pass
 
+        # Print the updated state for debugging
+        print("Updated state:", state)
+
         return state
+
     def handle_output(self, state: AgentState):
         """
         Takes action based on the state of the agent.
@@ -91,19 +108,19 @@ class ReportGeneratorAgent(BaseAgent):
         selected_tool = state['tool_calls']
         print(f"Calling: {selected_tool}")
         # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "generate_reports":
+        if selected_tool == "generate_reports_tools":
             # set the input parameters or arguments for the tool.
             tool_input = {
                 "query": state['postgres_query']
             }
 
             # invoke the tool and get the result.
-            report_generator_response = self.tools_dict[selected_tool].invoke(tool_input)
+            report_generation_response = self.tools_dict[selected_tool].invoke(tool_input)
 
             # update the state with the tool result.
-            state['report_generation_response'] = report_generator_response
+            state['report_generation_response'] = report_generation_response
             state['memory_chain'].append({
-                'report_generator_response': state['report_generator_response']
+                'report_generation_response': state['report_generation_response']
             })
 
         return state

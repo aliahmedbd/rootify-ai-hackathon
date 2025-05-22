@@ -10,6 +10,11 @@ from graphs.build_graph import build_general_agent_graph, build_general_agent_gr
 print("Building the graph...")
 graph = build_general_agent_graph_with_report()
 print("Graph has been built.")
+from graphs.repor_generator_graph import build_report_generator_graph
+
+
+# initiate the graph_build
+graph = build_report_generator_graph()
 
 # Streamlit UI components
 st.title("DevOpsAssist")

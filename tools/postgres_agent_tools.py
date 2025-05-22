@@ -77,5 +77,5 @@ class PostGresAgentTools:
         :return: A dictionary containing the schema of the table.
         """
         pg_connector = PostgresConnector()
-        response = pg_connector.get_table_schema(table_name=table_name)
+        response = pg_connector.get_table_schemas(table_name=table_name)
         return response
