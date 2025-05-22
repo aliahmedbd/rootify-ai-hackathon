@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tools.postgres_agent_tools import get_table_schemas
+from tools.postgres_agent_tools import PostGresAgentTools
 from connectors.db_connector import PostgresConnector   
 
 def test_postgres_tool():
