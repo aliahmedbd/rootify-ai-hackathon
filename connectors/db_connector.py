@@ -36,8 +36,19 @@ class PostgresConnector:
                     WHERE table_schema = 'public'
                     ORDER BY table_name, ordinal_position;
                 """)
-                rows = cur.fetchall()
-                return rows
+                results = cur.fetchall()
+        schemas_text = ""
+        current_table = None
+        for row in results:
+            table, column, data_type = row
+            if current_table != table:
+                if current_table is not None:
+                    schemas_text += "\n"
+                schemas_text += f"Table: {table}\n"
+                current_table = table
+            schemas_text += f"  Column: {column}, Type: {data_type}\n"
+        return schemas_text
+        #return results
     def create_table(self, table_name, schema):
         """
         Create a sample table with specified name.
