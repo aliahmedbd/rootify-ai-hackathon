@@ -1,7 +1,10 @@
 import psycopg
 from psycopg import sql
 from psycopg.rows import dict_row
+<<<<<<< HEAD
 from pglast import parse_sql, Error
+=======
+>>>>>>> 007fbf1 (Getting all the schema name from tabel)
 from typing import Dict, Union, Any
 import os
 
@@ -25,7 +28,8 @@ class PostgresConnector:
         except psycopg.Error as e:
             print(f"Error connecting to PostgreSQL database: {e}")
             raise
-    def get_table_schemas(self, table_name: str) -> Dict[str, Any]:
+
+    def get_table_schemas(self) -> Dict[str, Any]:
         """
         Get the schemas of all tables in the PostgreSQL database.
         """  
@@ -49,6 +53,7 @@ class PostgresConnector:
             schemas_text += f"  Column: {column}, Type: {data_type}\n"
         return schemas_text
         #return results
+
     def create_table(self, table_name, schema):
         """
         Create a sample table with specified name.
