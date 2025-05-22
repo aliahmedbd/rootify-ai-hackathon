@@ -1,6 +1,6 @@
-# import sys
-# import os
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # from langchain.prompts import ChatPromptTemplate
 # from langchain.agents import Tool
 # from langchain_ibm import ChatWatsonx
@@ -10,11 +10,6 @@ import re
 from connectors.db_connector import PostgresConnector
 from agents.general_agent import GeneralAgent
 from agents.base_agent import AgentState
-<<<<<<< HEAD
-from agents.general_agent import GeneralAgent
-from agents.base_agent import AgentState
-=======
->>>>>>> 50e009f (Modifying the script)
 clinet = PostgresConnector()
 
 state = AgentState(
