@@ -24,7 +24,7 @@ _ = load_dotenv()
  
 # Function map
 FUNCTION_MAP = {
-    "test_generate_reports": generate_reports,
+    "test_generate_reports_tools": test_report_generation_tools,
     "test_postgres_create_table": test_postgres_create_table,
     "test_postgres_insert_data": test_postgres_insert_data,
     "test_postgres_query_data": test_postgres_query_data,
