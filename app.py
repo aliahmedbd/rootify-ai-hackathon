@@ -4,7 +4,8 @@ _ = load_dotenv()
 
 import streamlit as st
 import streamlit.components.v1 as components
-from graphs.build_graph import build_general_agent_graph, build_general_agent_graph_with_report
+from graphs.build_graph import build_general_agent_graph_with_report
+from graphs.vector_db_agent_graph import vector_db_agent_graph
 
 
 # initiate the graph_build
