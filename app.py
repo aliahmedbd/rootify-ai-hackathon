@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 _ = load_dotenv()
 
 import streamlit as st
+import streamlit.components.v1 as components
 from graphs.build_graph import build_general_agent_graph, build_general_agent_graph_with_report
 
 
@@ -10,11 +11,6 @@ from graphs.build_graph import build_general_agent_graph, build_general_agent_gr
 print("Building the graph...")
 graph = build_general_agent_graph_with_report()
 print("Graph has been built.")
-from graphs.repor_generator_graph import build_report_generator_graph
-
-
-# initiate the graph_build
-graph = build_report_generator_graph()
 
 # Streamlit UI components
 st.title("DevOpsAssist")
@@ -39,7 +35,26 @@ if query:
             unsafe_allow_html=True,
         )
     # Generate response (can still show spinner)
+    thread = {"configurable": {"thread_id": "1"}}
+
     with st.spinner("Generating response..."):
+        # for output in graph.stream({
+        #         'user_input': query,
+        #         'supervisor_decision': '',
+        #         'tool_calls': '',
+        #         'agent_tool_retries':0,
+        #         'agent_max_tool_retries': 3,
+        #         'postgres_query': '',
+        #         'postgres_agent_response': '',
+        #         'vector_db_agent_response': '',
+        #         'report_generation_requested': '',
+        #         'report_generation_response': '',
+        #         'final_response': '',
+        #         'memory_chain': []
+        #     }, thread):
+        #     # Display the output in real-time
+        #     st.write(output)
+
         result = graph.invoke(            
             {
                 'user_input': query,
@@ -72,6 +87,22 @@ if query:
         st.write("\n\n")
         st.write(result['memory_chain'])
 
+    if result['report_generation_response'] == "Report Generated":
+        with open("reports/combined_report.html", "r") as file:
+            report_content = file.read()
+            components.html(
+                report_content,
+                height=800,
+                scrolling=True,
+            )
+        
+        # Add a download button for the report
+        st.download_button(
+            label="Download Report",
+            data=report_content,
+            file_name="report.html",
+            mime="text/html"
+        )
     # Save query and response to session_state
     st.session_state.chat_history.append({
         "query": query,

@@ -1,6 +1,6 @@
 from prompt_reference.general_agent_prompts import general_prompt
 from prompt_reference.postgres_agent_prompts import sql_query_prompt
-from tools.report_generator_updated_tools import generate_reports
+from tools.report_generator_updated_tools import generate_reports_tools
 from tools.postgres_agent_tools import PostGresAgentTools
 from tools.vector_db_tools import vectorDbAgentTools
 
@@ -10,7 +10,6 @@ from utils.handle_configs import get_llm
 from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import END
 from config import Config
-import streamlit as st
 
 
 class GeneralAgent(BaseAgent):
@@ -27,7 +26,7 @@ class GeneralAgent(BaseAgent):
             PostGresAgentTools.generate_query,
             PostGresAgentTools.run_query,
             vectorDbAgentTools.similarity_search,
-            generate_reports,
+            generate_reports_tools,
             ]
 
         # the tools_dict enables the agent to call the tools by name.
@@ -56,13 +55,20 @@ class GeneralAgent(BaseAgent):
             SystemMessage(content=system_msg),
             HumanMessage(content=f"{state['user_input']}")
         ]
-        # call the llm with the message
-        agent_response = self.llm_with_tools.invoke(message)
+        # call the llm with the message for its reasoning and decision making.
+        agent_response = self.llm.invoke(message)
+        # update the state with the agent response
+        state['memory_chain'].append({
+            'agent_plan': agent_response.content}
+        )
+
+        # get the llm response and update the state with tool calls.
+        tool_response = self.llm_with_tools.invoke(message)
 
         # update the state with the agent response
-        if hasattr(agent_response, 'tool_calls'):
+        if hasattr(tool_response, 'tool_calls'):
             try:
-                state['tool_calls'] = agent_response.tool_calls[0]['name']
+                state['tool_calls'] = tool_response.tool_calls[0]['name']
                 state['memory_chain'].append({
                 'selected_tool': state['tool_calls']
                 })
@@ -99,20 +105,22 @@ class GeneralAgent(BaseAgent):
         selected_tool = state['tool_calls']
         print(f"Calling: {selected_tool}")
         # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "generate_reports":
+        if selected_tool == "generate_reports_tools":
             # set the input parameters or arguments for the tool.
             tool_input = {
                 "query": state['postgres_query']
             }
 
             # invoke the tool and get the result.
-            report_generator_response = self.tools_dict[selected_tool].invoke(tool_input)
+            report_generation_response = self.tools_dict[selected_tool].invoke(tool_input)
 
             # update the state with the tool result.
-            state['report_generation_response'] = report_generator_response
+            state['report_generation_response'] = report_generation_response
             state['memory_chain'].append({
-                'report_generator_response': state['report_generator_response']
+                'report_generation_response': state['report_generation_response']
             })
+
+        return state
     
 
     def vector_search(self, state: AgentState):
@@ -209,22 +217,13 @@ class GeneralAgent(BaseAgent):
         # if the agent has decided to do a similarity search, we will call the vector db search tool.    
         elif state['tool_calls'] == "similarity_search":
             return "vector_search"
-        elif state['tool_calls'] == "generate_reports":
+        elif state['tool_calls'] == "run_query":
+            return "run_query"
+        elif state['tool_calls'] == "generate_reports_tools":
+            state['report_generation_requested'] = True
+            state['memory_chain'].append({
+                'report_generation_requested': state['report_generation_requested']
+            })
             return "generate_report"      
         else:
-            return END
-
-    def router_2(self, state: AgentState):
-        """
-        The router function to route the agent to the next step.
-        :param state: The state of the agent containing the user input and states to be updated.
-        :return: updated state for the agent.
-        """
-        # If the agent has decided to generate a SQL query, we will call the sql query generation tool.
-        if "generate report" in state['user_input'].lower():
-            return "generate_report"
-        # if the agent has decided to do a similarity search, we will call the vector db search tool.    
-        else:
             return "handle_response"
-        
-    

@@ -64,7 +64,7 @@ def test_vectordb_agent_tools():
     breakpoint()
 
 
-def test_executor_agent_tools():
+def test_general_agent_tools():
 
 
     user_input = "How many records are there in the jira database?"
@@ -82,13 +82,13 @@ def test_executor_agent_tools():
                 'memory_chain': []
             }
     )
-    executor = GeneralAgent()
+    agent = GeneralAgent()
 
-    state = executor.handle_input(state=state)
+    state = agent.handle_input(state=state)
     print(state)
     while len(state['postgres_agent_response']) < 1:
         breakpoint()
-        state = executor.use_tools(state=state)
+        state = agent.use_tools(state=state)
         print("updated state", state)
 
     user_input = "What technologies are supported for containerized deployment of FCC application?"

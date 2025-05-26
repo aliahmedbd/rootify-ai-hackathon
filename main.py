@@ -45,18 +45,20 @@ from langchain_core.runnables.graph import MermaidDrawMethod
 def test_general_agent_with_reports():
     graph = build_general_agent_graph_with_report()
 
-    with open("general_agent_with_report.png", "wb") as image_file:
+    file_name = "general_agent_with_report.png"
+    with open(file_name, "wb") as image_file:
         image_file.write(graph.get_graph().draw_png())
     
-    print("Graph has been built and saved as graph_output.png")
+    print(f"Graph has been built and saved as {file_name}")
 
-    # # for vectordb test
-    # user_input="How many records are there in the jira database?"
+    # queries for different tests.
+    query="How many records are there in the jira database?"
     # user_input = "What technologies are supported for containerized deployment of FCC application?"
+    # query = "Generate a report of the number of issues by status in the jira database."
 
-    # result = graph.invoke(
-    #         {
-    #                 'user_input': user_input,
+    # result = graph.invoke(            
+    #             {
+    #                 'user_input': query,
     #                 'supervisor_decision': '',
     #                 'tool_calls': '',
     #                 'agent_tool_retries':0,
@@ -64,13 +66,15 @@ def test_general_agent_with_reports():
     #                 'postgres_query': '',
     #                 'postgres_agent_response': '',
     #                 'vector_db_agent_response': '',
+    #                 'report_generation_requested': '',
+    #                 'report_generation_response': '',
     #                 'final_response': '',
     #                 'memory_chain': []
     #             }
-    #     )
+    #         )
     # print(result['final_response'])
 
-    # breakpoint()
+    breakpoint()
 
 # def test_report_generator_agent():
 #     graph = build_report_generator_graph()
