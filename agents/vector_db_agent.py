@@ -79,11 +79,11 @@ class VectorDbAgent(BaseAgent):
         })
         return state
 
-    def use_vector_db_tools(self, state: AgentState):
+    def vector_search(self, state: AgentState):
         # check the tool to use.
-        selected_tool = state['tool_calls']
+        selected_tool = "similarity_search"
         print(f"Calling: {selected_tool}")
-        # invoke the tools and udpate the states depending on the tool use.
+
         if selected_tool == "similarity_search":
             # set the input parameters or arguments for the tool.
             tool_input = {

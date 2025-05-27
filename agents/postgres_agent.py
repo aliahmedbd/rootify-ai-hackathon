@@ -1,4 +1,4 @@
-from prompt_reference.postgres_agent_prompts import postgres_prompt
+from prompt_reference.postgres_agent_prompts import postgres_prompt, sql_query_prompt
 from tools.postgres_agent_tools import PostGresAgentTools
 
 from agents.base_agent import BaseAgent, AgentState
@@ -19,12 +19,17 @@ class PostGresAgent(BaseAgent):
 
         # define and bind the tools to the agent.
         self.tools = [
-            PostGresAgentTools.query_data,
+            PostGresAgentTools.generate_query,
+            PostGresAgentTools.run_query,
             ]
 
         # the tools_dict enables the agent to call the tools by name.
         self.tools_dict = {t.name: t for t in self.tools}
-        self.llm_with_tools = self.llm.bind_tools(self.tools)        
+        self.llm_with_tools = self.llm.bind_tools(self.tools)
+
+        # define the system message for the sql query generation agent.
+        self.sql_generator_params = Config.sql_generator_params
+        self.sql_generator = get_llm(self.sql_generator_params)       
 
 
     def handle_input(self, state: AgentState):
@@ -53,18 +58,51 @@ class PostGresAgent(BaseAgent):
         return state
     
 
-    def use_postgres_tools(self, state: AgentState):
+    def generate_sql_query(self, state: AgentState):
         # check the tool to use.
-        selected_tool = state['tool_calls']
+        selected_tool = "generate_query"
         print(f"Calling: {selected_tool}")
-        # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "query_data":
-            # set the input parameters or arguments for the tool.
-            tool_input = {
-                "query": state['postgres_query'],
-                "params": None
-            }
 
+        system_prompt = sql_query_prompt.format(user_input=state['user_input'])
+
+        system_prompt = SystemMessage(
+            content=system_prompt
+        )
+        # set the input parameters or arguments for the tool.
+        tool_input = {
+            "user_input": state['user_input'],
+            "system_prompt": system_prompt,
+            "llm": self.sql_generator
+        }
+        
+        # invoke the tool and get the result.
+        try:
+            sql_query = self.tools_dict[selected_tool].invoke(tool_input)
+
+            # update the state with the tool result.
+            state['postgres_query'] = sql_query
+            state['memory_chain'].append({
+                'postgres_query': state['postgres_query']
+            })
+        except:
+            state['agent_tool_retries'] += 1
+            pass
+
+        return state
+    
+
+    def run_sql_query(self, state: AgentState):
+        # check the tool to use.
+        print(f"Running SQL Query: {state['postgres_query']}")
+        selected_tool = 'run_query'
+
+        # set the input parameters or arguments for the tool.
+        tool_input = {
+            "query": state['postgres_query'],
+            "params": None
+        }
+
+        try:
             # invoke the tool and get the result.
             postgres_agent_response = self.tools_dict[selected_tool].invoke(tool_input)
 
@@ -73,5 +111,8 @@ class PostGresAgent(BaseAgent):
             state['memory_chain'].append({
                 'postgres_agent_response': state['postgres_agent_response']
             })
+        except:
+            state['agent_tool_retries'] += 1
+            pass
 
         return state

@@ -28,23 +28,9 @@ class SupervisorAgent(BaseAgent):
 
     def handle_input(self, state: AgentState):
 
-        """To be implemented"""
         # instantiate the prompt with the state.
-        user_input = state['user_input']
-
-        # combine responses, will return a string if child agent responses are available. Otherwise, will concat empty strings.
-        agent_response = str(state['maximo_agent_response']) + '\n' + str(state['vector_db_agent_response'])
-        
-        # to ensure a supervisor has already routed to an agent and keep track of that.
-        if state['supervisor_decision'] != '':
-            agents_consulted = 'yes'
-        else:
-            agents_consulted = 'no'
-
         system_message = SupervisorPrompts.supervisor_prompt.format(
-            user_input=user_input,
-            agent_response=agent_response,
-            agents_consulted=agents_consulted
+            state=state
         )
 
         message = [
@@ -55,13 +41,12 @@ class SupervisorAgent(BaseAgent):
         # call the llm with the message.
         supervisor_response = self.llm.invoke(message).content
 
-        # update the state with the supervisor response.
+        # update the state with the supervisor response on which agent to call next.
+        state['supervisor_decision'] = supervisor_response
+        print(state['supervisor_decision'])
+
         state['memory_chain'].append({'supervisor_response': supervisor_response})
 
-        if supervisor_response.lower().replace(" ", "") in ['maximo', 'vector_db', 'unknown']:
-            state['supervisor_decision'] = supervisor_response
-        else:
-            state['final_response'] = supervisor_response
 
         return state
 
@@ -72,12 +57,35 @@ class SupervisorAgent(BaseAgent):
 
         decision = state['supervisor_decision']
  
-        if len(state['final_response']) > 1:
-            return END
-        if "maximo" in decision:
-            return "maximo_agent"
-        elif "vector_db" in decision:
+        if "vector_db" in decision:
             return "vector_db_agent"
-        elif 'unknown' in decision:
-            return "supervisor"
-        
+        elif "postgres" in decision:
+            return "postgres_agent"
+        elif 'report' in decision:
+            return "report_generator_agent"
+        else:  
+            # if no decision is made, return END to stop the graph.
+            return "handle_response"
+    
+    def handle_output(self, state: AgentState):
+        """
+        Takes action based on the state of the agent.
+        :param state: The state of the agent containing the user input and states to be updated.
+        :return: updated state for the agent.
+        """
+
+        # use the tools to get the results and responses before getting back to the supervisor.
+        system_msg = SupervisorPrompts.supervisor_response_prompt.format(state=state)
+        message = [
+            SystemMessage(content=system_msg),
+            HumanMessage(content=f"{state['user_input']}")
+        ]
+        # call the llm with the message
+        agent_response = self.llm.invoke(message)
+
+        # update the state with the agent response
+        state['final_response'] = agent_response.content
+        state['memory_chain'].append({
+            'final_response': state['final_response']
+        })
+        return state

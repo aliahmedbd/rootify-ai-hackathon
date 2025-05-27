@@ -1,5 +1,4 @@
 from prompt_reference.reportgenerate_agent_prompts import reportgenerate_prompt
-from prompt_reference.postgres_agent_prompts import sql_query_prompt
 from tools.report_generator_updated_tools import generate_reports_tools
 from tools.postgres_agent_tools import PostGresAgentTools
 
@@ -103,12 +102,12 @@ class ReportGeneratorAgent(BaseAgent):
         })
         return state
 
-    def use_tools(self, state: AgentState):
+    def generate_report(self, state: AgentState):
         # check the tool to use.
-        selected_tool = state['tool_calls']
+        selected_tool = "generate_report"
         print(f"Calling: {selected_tool}")
         # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "generate_reports_tools":
+        if selected_tool == "generate_report":
             # set the input parameters or arguments for the tool.
             tool_input = {
                 "query": state['postgres_query']
@@ -124,60 +123,4 @@ class ReportGeneratorAgent(BaseAgent):
             })
 
         return state
-    def generate_sql_query(self, state: AgentState):
-        # check the tool to use.
-        selected_tool = state['tool_calls']
-        print(f"Calling: {selected_tool}")
-
-        system_prompt = sql_query_prompt.format(user_input=state['user_input'])
-
-        system_prompt = SystemMessage(
-            content=system_prompt
-        )
-        # set the input parameters or arguments for the tool.
-        tool_input = {
-            "user_input": state['user_input'],
-            "system_prompt": system_prompt,
-            "llm": self.sql_generator
-        }
-        
-        # invoke the tool and get the result.
-        try:
-            sql_query = self.tools_dict[selected_tool].invoke(tool_input)
-
-            # update the state with the tool result.
-            state['postgres_query'] = sql_query
-            state['memory_chain'].append({
-                'postgres_query': state['postgres_query']
-            })
-        except:
-            state['agent_tool_retries'] += 1
-            pass
-
-        return state
     
-    def run_sql_query(self, state: AgentState):
-        # check the tool to use.
-        print(f"Running SQL Query: {state['postgres_query']}")
-        selected_tool = 'run_query'
-
-        # set the input parameters or arguments for the tool.
-        tool_input = {
-            "query": state['postgres_query'],
-            "params": None
-        }
-
-        try:
-            # invoke the tool and get the result.
-            postgres_agent_response = self.tools_dict[selected_tool].invoke(tool_input)
-
-            # update the state with the tool result.
-            state['postgres_agent_response'] = postgres_agent_response
-            state['memory_chain'].append({
-                'postgres_agent_response': state['postgres_agent_response']
-            })
-        except:
-            state['agent_tool_retries'] += 1
-            pass
-
-        return state
