@@ -26,7 +26,7 @@ if "chat_history" not in st.session_state:
 # User input
 query = st.text_input("Type your query here")
 
-col1, col2 = st.columns([1, 5])
+col1, col2 = st.columns([2, 5])
 # When query is submitted (Enter pressed)
 if query:
     with col2:

@@ -109,17 +109,21 @@ def build_general_agent_graph_with_report():
         {
             "generate_sql_query": "generate_sql_query",
             "vector_search": "vector_search",
-            "generate_report": "generate_report",
-            "run_query": "run_query",
-            "handle_response": "handle_response",
+            END: END,
         }
     )
 
     # add edges for sub tasks with postgres queries and report generation.
-    graph.add_edge("generate_sql_query", agent.name)
-    graph.add_edge("run_query", agent.name)
-
+    graph.add_conditional_edges(
+        "generate_sql_query", 
+        agent.router_2,
+        {
+            "run_query": "run_query",
+            "generate_report": "generate_report"
+        })
+    
     # add edges for sub tasks with vector search.
+    graph.add_edge("run_query", "handle_response")
     graph.add_edge("vector_search", "handle_response")
     graph.add_edge("generate_report", "handle_response")
 

@@ -58,8 +58,9 @@ class GeneralAgent(BaseAgent):
         # call the llm with the message for its reasoning and decision making.
         agent_response = self.llm.invoke(message)
         # update the state with the agent response
+        state['supervisor_decision'] = agent_response.content
         state['memory_chain'].append({
-            'agent_plan': agent_response.content}
+            'supervisor_decision': agent_response.content}
         )
 
         # get the llm response and update the state with tool calls.
@@ -102,23 +103,23 @@ class GeneralAgent(BaseAgent):
     
     def generate_report(self, state: AgentState):
         # check the tool to use.
-        selected_tool = state['tool_calls']
+        selected_tool = "generate_reports_tools"
         print(f"Calling: {selected_tool}")
         # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "generate_reports_tools":
-            # set the input parameters or arguments for the tool.
-            tool_input = {
-                "query": state['postgres_query']
-            }
+        # if selected_tool == "generate_reports_tools":
+        # set the input parameters or arguments for the tool.
+        tool_input = {
+            "query": state['postgres_query']
+        }
 
-            # invoke the tool and get the result.
-            report_generation_response = self.tools_dict[selected_tool].invoke(tool_input)
+        # invoke the tool and get the result.
+        report_generation_response = self.tools_dict[selected_tool].invoke(tool_input)
 
-            # update the state with the tool result.
-            state['report_generation_response'] = report_generation_response
-            state['memory_chain'].append({
-                'report_generation_response': state['report_generation_response']
-            })
+        # update the state with the tool result.
+        state['report_generation_response'] = report_generation_response
+        state['memory_chain'].append({
+            'report_generation_response': state['report_generation_response']
+        })
 
         return state
     
@@ -217,13 +218,24 @@ class GeneralAgent(BaseAgent):
         # if the agent has decided to do a similarity search, we will call the vector db search tool.    
         elif state['tool_calls'] == "similarity_search":
             return "vector_search"
-        elif state['tool_calls'] == "run_query":
-            return "run_query"
-        elif state['tool_calls'] == "generate_reports_tools":
+        else:
+            END
+
+    
+    def router_2(self, state: AgentState):
+        """
+        The router function to route the agent to the next step after the tool calls.
+        :param state: The state of the agent containing the user input and states to be updated.
+        :return: updated state for the agent.
+        """
+        # If the agent has decided to generate a SQL query, we will call the sql query generation tool.
+        if "report" in state['user_input'].lower():
+            print("report" in state['user_input'].lower())
             state['report_generation_requested'] = True
             state['memory_chain'].append({
                 'report_generation_requested': state['report_generation_requested']
             })
-            return "generate_report"      
-        else:
-            return "handle_response"
+            return "generate_report" 
+        else:            
+            return "run_query"
+        
