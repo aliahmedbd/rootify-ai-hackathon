@@ -104,10 +104,10 @@ class ReportGeneratorAgent(BaseAgent):
 
     def generate_report(self, state: AgentState):
         # check the tool to use.
-        selected_tool = "generate_report"
+        selected_tool = "generate_reports_tools"
         print(f"Calling: {selected_tool}")
         # invoke the tools and udpate the states depending on the tool use.
-        if selected_tool == "generate_report":
+        if selected_tool == "generate_reports_tools":
             # set the input parameters or arguments for the tool.
             tool_input = {
                 "query": state['postgres_query']

@@ -13,8 +13,8 @@ class SupervisorPrompts:
     Typical use cases include finding related products, similar documents, or searching by concept rather than exact match. The knowedge base is a vector database (Milvus) that has stored
     confluence data on product information such as FCC.
 
-    3. **report_generator_agent**: Use this agent when the user asks for summaries, overviews, or synthesized reports based on retrieved data. 
-    Example queries: “generate a usage report”, “summarize results”, “create a dashboard/report from the retrieved data”.
+    3. **report_generator_agent**: Use this agent when the user asks for report creation. This agent can also handle sql query generation and execution if the user query is related to generating reports or summaries based on data retrieved by the other agents. 
+    Example queries: “generate a usage report”, “summarize results”, “create a dashboard/report for xxx data”. You do not need to use postgres_agent or vector_db_agent for this, as the report_generator_agent can handle the sql query generation and execution.
 
     4. **unknown**: Use this when the user query does not match any of the above categories or is incomplete query and/or unclear.
 
