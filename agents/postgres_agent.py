@@ -113,6 +113,11 @@ class PostGresAgent(BaseAgent):
             state['memory_chain'].append({
                 'postgres_agent_response': state['postgres_agent_response']
             })
+        except Exception as e:
+            state['agent_tool_retries'] += 1
+            pass
+
+
     def validate_sql_query(self, state: AgentState):
         """ Validate the SQL query using pglast.
         :param state: The state of the agent containing the SQL query to validate.
