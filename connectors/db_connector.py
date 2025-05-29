@@ -4,6 +4,7 @@ from psycopg.rows import dict_row
 from pglast import parse_sql, Error
 from typing import Dict, Union, Any
 import os
+import re
 
 class PostgresConnector:
     def __init__(self):
@@ -171,3 +172,14 @@ class PostgresConnector:
         except Error as e:
             print("Syntax error:", e)
             return False
+    @staticmethod
+    def validate_with_pglast_Latest(sql: str):
+        """
+        Validate SQL syntax using pglast.
+        Returns a dict with 'valid': bool and 'error': str (if any).
+        """
+        try:
+            parse_sql(sql)
+            return {"valid": True, "error": None}
+        except Error as e:
+            return {"valid": False, "error": str(e)}
