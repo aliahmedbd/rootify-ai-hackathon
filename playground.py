@@ -1,22 +1,15 @@
-<<<<<<< HEAD
 # import sys
 # import os
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-=======
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
->>>>>>> 30c27b9 (modified the script)
 # from langchain.prompts import ChatPromptTemplate
 # from langchain.agents import Tool
 # from langchain_ibm import ChatWatsonx
 # from langchain.agents import initialize_agent
 # import os
-<<<<<<< HEAD
 import re
-=======
->>>>>>> 30c27b9 (modified the script)
 from connectors.db_connector import PostgresConnector
+from agents.general_agent import GeneralAgent
+from agents.base_agent import AgentState
 from agents.general_agent import GeneralAgent
 from agents.base_agent import AgentState
 clinet = PostgresConnector()
@@ -41,8 +34,8 @@ agents = GeneralAgent()
 state = agents.generate_sql_query(state=state)
 query = state['postgres_query']
 sql_query = re.search(r"SELECT.*;|UPDATE.*;|INSERT.*;", query)
-#query = "SELECT COUNT(*) 'Status' = 'in-progress;"
-#sql_query = re.search(r"SELECT.*;|UPDATE.*;|INSERT.*;", query)
+#query = "'''SELECT COUNT(*) FROM jira_data WHERE 'Status' = 'in-progress'''';"
+sql_query = re.search(r"SELECT.*;|UPDATE.*;|INSERT.*;", query)
 #print(query)
 #state['postgres_query'] = query   
 #         state['postgres_agent_response'] = response
