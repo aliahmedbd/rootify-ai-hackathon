@@ -10,8 +10,11 @@ import re
 from connectors.db_connector import PostgresConnector
 from agents.general_agent import GeneralAgent
 from agents.base_agent import AgentState
+<<<<<<< HEAD
 from agents.general_agent import GeneralAgent
 from agents.base_agent import AgentState
+=======
+>>>>>>> 50e009f (Modifying the script)
 clinet = PostgresConnector()
 
 state = AgentState(
@@ -34,8 +37,8 @@ agents = GeneralAgent()
 state = agents.generate_sql_query(state=state)
 query = state['postgres_query']
 sql_query = re.search(r"SELECT.*;|UPDATE.*;|INSERT.*;", query)
-#query = "SELECT COUNT(*) 'Status' = 'in-progress;"
-#sql_query = re.search(r"SELECT.*;|UPDATE.*;|INSERT.*;", query)
+#query = "'''SELECT COUNT(*) FROM jira_data WHERE 'Status' = 'in-progress'''';"
+sql_query = re.search(r"SELECT.*;|UPDATE.*;|INSERT.*;", query)
 #print(query)
 #state['postgres_query'] = query   
 #         state['postgres_agent_response'] = response
