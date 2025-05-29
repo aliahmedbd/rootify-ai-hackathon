@@ -69,6 +69,7 @@ if query:
     response = results[-1]['handle_response']['final_response']
 
     st.markdown("\n")
+    st.markdown("\n")
 
     col3, col4 = st.columns([5, 1])
     with col3:
@@ -77,9 +78,12 @@ if query:
             unsafe_allow_html=True,
         )
 
-    st.markdown("\n\n")
+    st.markdown("\n")
+    st.markdown("\n")
+
     with st.expander("Show Full Model Process", expanded=False):
-        st.write("\n\n")
+        st.write("\n")
+        st.write("\n")
         st.write(results[-1]['handle_response']['memory_chain'])
 
     if results[-1]['handle_response']['report_generation_response'] == "Report Generated":

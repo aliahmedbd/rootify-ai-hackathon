@@ -43,8 +43,11 @@ class SupervisorPrompts:
     Guidelines:
     - Only use the information provided in the state context.
     - Do not invent or assume the presence of any information not included in the state.
-    - If the user query is not answerable with the current state data, provide a clear explanation of why you cannot answer it.
-    - Return only the final response. Make sure it is clear, concise, and informative, with no unnecessary characters or formatting.
+    - If the user query is not answerable with the current state data, let them know why.
+    - Return only the final response. Make sure it is clear, concise, and informative.
+    - Use lists and tables where appropriate to present information clearly. Also provide line breaks for readability.
+    - If the user query is related to generating a report, you can use the `report_generation_response` from the state.
+    - Do not provide any additional explanations or context beyond the response to the user query.
 
     <state>
     {state}
