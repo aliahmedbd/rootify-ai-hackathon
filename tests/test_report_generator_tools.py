@@ -1,8 +1,9 @@
 import sys
 import os
 # Make sure the following import matches the actual function name in report_generator_updated_tools.py
-#from tools.report_generator_updated_tools import generate_reports_tools as generate_reports
 from tools.report_generatorC_tools import generate_reports_tools as generate_reports
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Make sure the following import matches the actual function name in report_generator_updated_tools.py
 from tools.report_generator_updated_tools import generate_reports_tools
 
 def test_report_generation_tools():

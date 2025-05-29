@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 DevOps Chat Assist represents a significant advancement in DevOps tooling, offering a range of features and benefits that can greatly enhance the efficiency, collaboration, and reliability of DevOps teams. By leveraging this tool, organizations can achieve faster time to market, reduced costs, and improved customer satisfaction.
 ===============================================================================================================================================
 
@@ -16,6 +17,8 @@ max    364.000000
 ```
 
 =======
+=======
+>>>>>>> 94a7232 (Updated report tool to display the chart)
 +-------+---------+
 |       |   count |
 |-------+---------|
@@ -27,5 +30,9 @@ max    364.000000
 | 50%   |  77     |
 | 75%   | 110     |
 | max   | 364     |
+<<<<<<< HEAD
 +-------+---------+
 >>>>>>> 0015b23 (Updated report tool to display the chart)
+=======
++-------+---------+
+>>>>>>> 94a7232 (Updated report tool to display the chart)
