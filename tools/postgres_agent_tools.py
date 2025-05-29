@@ -79,6 +79,18 @@ class PostGresAgentTools:
         pg_connector = PostgresConnector()
         response = pg_connector.get_table_schemas(table_name=table_name)
         return response
-    class GetTableSchemas(BaseModel):
-        table_name: str = Field(description="The name of the table to get the schema for.")
+    
+    class validate_sql_query(BaseModel):
+        query: str = Field(description="The SQL query to validate.")
         params: Any = Field(description="The parameters for the query to configure it/optimise it.")
+    @tool(args_schema=validate_sql_query)
+    def validate_sql_query(query: str, params=None) -> Dict[str, Any]:
+        """
+        Validate the SQL query.
+        :param query: The SQL query to validate.
+        :param params: The parameters for the query to configure it/optimise it.
+        :return: A dictionary containing the validation result.
+        """
+        pg_connector = PostgresConnector()
+        response = pg_connector.validate_with_pglast_Latest(query=query, params=params)
+        return response

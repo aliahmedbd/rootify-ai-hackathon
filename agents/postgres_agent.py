@@ -6,6 +6,7 @@ from utils.handle_configs import get_llm
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from config import Config
+from connectors.db_connector import PostgresConnector  # Add this import or adjust the path as needed
 
 
 class PostGresAgent(BaseAgent):
@@ -20,7 +21,8 @@ class PostGresAgent(BaseAgent):
         # define and bind the tools to the agent.
         self.tools = [
             PostGresAgentTools.generate_query,
-            PostGresAgentTools.run_query,
+            PostGresAgentTools.validate_sql_query,
+            
             ]
 
         # the tools_dict enables the agent to call the tools by name.
@@ -111,8 +113,43 @@ class PostGresAgent(BaseAgent):
             state['memory_chain'].append({
                 'postgres_agent_response': state['postgres_agent_response']
             })
-        except:
-            state['agent_tool_retries'] += 1
-            pass
+    def validate_sql_query(self, state: AgentState):
+        """ Validate the SQL query using pglast.
+        :param state: The state of the agent containing the SQL query to validate.
+        :return: updated state with validation result.
+        """
+        # Extract the SQL query from the state
+        sql_query = state['postgres_query']
+        # fetching propery query using regular expression
+        query = re.search(r"SELECT.*;|UPDATE.*;|INSERT.*;", sql_query)
 
+        # Validate the SQL query using pglast
+        response = PostgresConnector.validate_with_pglast_Latest(sql=query.group(0) if query else sql_query)
+        # Check if the response indicates an error
+        if response.get("status") == "error":
+            # If there's an error, update the state with the error message
+            state['postgres_agent_response'] = response
+            state['memory_chain'].append({
+                'validation_error': response.get("error", "Unknown error")
+            })
+            return state
+        # If validation is successful, update the state with the validation result
+        if response.get("status") == "ok":
+            response = {
+                "status": "ok",
+                "message": "SQL query is valid."
+            }
+        else:
+            response = {
+                "status": "error",
+                "error": "SQL query validation failed."
+            }
+        
+        # Update the state with the validation result
+        state['postgres_agent_response'] = response
+        # Append the validation result to the memory chain
+        state['memory_chain'].append({
+            'validation_response': response
+        })
+        # Return the updated state
         return state
