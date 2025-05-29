@@ -1,6 +1,6 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# import sys
+# import os
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # from langchain.prompts import ChatPromptTemplate
 # from langchain.agents import Tool
 # from langchain_ibm import ChatWatsonx

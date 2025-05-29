@@ -95,3 +95,6 @@ class PostGresAgentTools:
         pg_connector = PostgresConnector()
         response = pg_connector.validate_with_pglast_Latest(query=query, params=params)
         return response
+    class GetTableSchemas(BaseModel):
+        table_name: str = Field(description="The name of the table to get the schema for.")
+        params: Any = Field(description="The parameters for the query to configure it/optimise it.")
