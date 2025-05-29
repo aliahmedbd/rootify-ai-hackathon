@@ -13,6 +13,8 @@ from langchain.tools import tool
 from jinja2 import Template
 from langchain_core.messages import HumanMessage, SystemMessage
 from typing import Dict, Union, Any
+import base64
+import os
 
 load_dotenv()
 
@@ -77,6 +79,12 @@ class CombinedReportGenerator(ReportGenerator):
                 generator.generate_report(df, output_file='reports/summary_report.txt')
                 with open('reports/summary_report.txt', 'r') as f:
                     summary_report = f.read()
+
+        chart_base64 = ""
+        chart_path = 'reports/severity_chart.png'
+        if os.path.exists(chart_path):
+            with open(chart_path, "rb") as img_file:
+                chart_base64 = base64.b64encode(img_file.read()).decode('utf-8')
 
         template = Template(r"""
 <html>
@@ -235,7 +243,7 @@ class CombinedReportGenerator(ReportGenerator):
     </div>
     <div id="chart" class="tabcontent">
         <h2>Chart</h2>
-        <img src="severity_chart.png" alt="Severity Chart" />
+        <img src="data:image/png;base64,{{ chart_base64 }}" alt="Severity Chart" />
     </div>
     <div id="summary-report" class="tabcontent">
         <h2>Summary Report</h2>
@@ -276,7 +284,11 @@ class CombinedReportGenerator(ReportGenerator):
                 with open('reports/summary_report.txt', 'r') as f:
                     summary_report = f.read()
 
-        html_content = template.render(html_report=html_report, summary_report=summary_report)
+        html_content = template.render(
+            html_report=html_report,
+            summary_report=summary_report,
+            chart_base64=chart_base64
+        )
 
         with open(output_file, 'w') as f:
             f.write(html_content)
