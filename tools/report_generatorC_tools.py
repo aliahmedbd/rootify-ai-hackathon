@@ -1,4 +1,3 @@
-import os
 #import sys
 #import os
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -9,9 +8,16 @@ import seaborn as sns
 from tabulate import tabulate
 from abc import ABC, abstractmethod
 from dotenv import load_dotenv
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from langchain.tools import tool
 from jinja2 import Template
+from langchain_core.messages import HumanMessage, SystemMessage
+from typing import Dict, Union, Any
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
+import os
+import base64
 load_dotenv()
 
 class ReportGenerator(ABC):
@@ -21,26 +27,12 @@ class ReportGenerator(ABC):
 
 class HTMLReportGenerator(ReportGenerator):
     def generate_report(self, df, output_file='reports/report.html'):
-        """
-        Generates an HTML report from the DataFrame.
-
-        Args:
-            df (pd.DataFrame): The DataFrame to convert to HTML.
-            output_file (str): The output file path.
-        """
         html_table = df.to_html()
         with open(output_file, 'w') as f:
             f.write(html_table)
 
 class MatplotlibChartGenerator(ReportGenerator):
     def generate_report(self, df, output_file='reports/severity_chart.png'):
-        """
-        Generates a Matplotlib chart for the first column in the DataFrame.
-
-        Args:
-            df (pd.DataFrame): The DataFrame to generate a chart from.
-            output_file (str): The output file path.
-        """
         if not df.empty:
             column = df.columns[0]
             plt.figure(figsize=(10, 6))
@@ -52,54 +44,96 @@ class MatplotlibChartGenerator(ReportGenerator):
         else:
             print("DataFrame is empty. Cannot generate chart.")
 
+class SeabornCountplotGenerator:
+    def generate_report(self, df, output_file='reports/combined_chart.png'):
+        if df.empty:
+            print("DataFrame is empty. Cannot generate chart.")
+            return
+        columns = df.columns.tolist()
+        if len(columns) < 2:
+            print("DataFrame must have at least two columns.")
+            return
+
+        x_column = columns[0]
+        hue_column = columns[1]
+        plt.figure(figsize=(10, 6))
+        if 'count' in columns:
+            sns.barplot(x=x_column, y='count', hue=hue_column, data=df)
+        else:
+            sns.countplot(x=x_column, hue=hue_column, data=df)
+        plt.title(f'Distribution of {hue_column} over {x_column}')
+        plt.xlabel(x_column)
+        plt.ylabel('Count')
+        plt.tight_layout()
+        plt.savefig(output_file)
+        plt.close()
+
+# SummaryReport
 
 class SummaryReportGenerator(ReportGenerator):
     def generate_report(self, df, output_file='reports/summary_report.txt'):
-        """
-        Generates a summary report of the DataFrame and saves it as a text file.
-
-        Args:
-            df (pd.DataFrame): The DataFrame to summarize.
-            output_file (str): The output file path.
-        """
-        summary_table = tabulate(df.describe(), headers='keys', tablefmt='psql')
         with open(output_file, 'w') as f:
-            f.write(summary_table)
+            f.write("DevOps Chat Assist represents a significant advancement in DevOps tooling, offering a range of features and benefits that can greatly enhance the efficiency, collaboration, and reliability of DevOps teams. By leveraging this tool, organizations can achieve faster time to market, reduced costs, and improved customer satisfaction.\n")
+            f.write("===============================================================================================================================================\n\n")
+
+            # # Data Shape
+            # f.write("## Data Shape\n")
+            # f.write(f"The dataset contains **{df.shape[0]}** rows and **{df.shape[1]}** columns.\n\n")
+
+            # # Column Information
+            # f.write("## Column Information\n")
+            # for column in df.columns:
+            #     f.write(f"* **{column}**: {df[column].dtype}\n")
+            # f.write("\n")
+
+            # Summary Statistics
+            #f.write("Summary Statistics\n")
+            summary_table = df.describe().to_string()
+            f.write(f"Summary statistics for the dataset:\n```\n{summary_table}\n```\n\n")
+
+            # # Missing Values
+            # f.write("## Missing Values\n")
+            # missing_values = df.isnull().sum().to_string()
+            # f.write(f"> Missing values count for each column:\n```\n{missing_values}\n```\n\n")
 
 class DataFetcher:
     def __init__(self, connector):
         self.connector = connector
 
     def fetch_data(self, query):
-        """
-        Fetches data from the database using the provided query.
-
-        Args:
-            query (str): The SQL query to execute.
-
-        Returns:
-            pd.DataFrame: The query result as a Pandas DataFrame.
-        """
         data = self.connector.query_data(query=query)
         cols = data[0]
         rows = data[1:]
         df = pd.DataFrame(rows, columns=cols)
         self.connector.close_connection()
         return df
-    
-    
+
 class CombinedReportGenerator(ReportGenerator):
     def __init__(self, report_generators):
         self.report_generators = report_generators
 
     def generate_report(self, df, output_file='reports/combined_report.html'):
-        """
-        Generates a combined HTML report from the outputs of the provided report generators.
+        html_report = ''
+        summary_report = ''
 
-        Args:
-            df (pd.DataFrame): The DataFrame to generate reports from.
-            output_file (str): The output file path.
-        """
+        for generator in self.report_generators:
+            if isinstance(generator, HTMLReportGenerator):
+                generator.generate_report(df, output_file='reports/temp.html')
+                with open('reports/temp.html', 'r') as f:
+                    html_report = f.read()
+            elif isinstance(generator, MatplotlibChartGenerator):
+                generator.generate_report(df, output_file='reports/severity_chart.png')
+            elif isinstance(generator, SummaryReportGenerator):
+                generator.generate_report(df, output_file='reports/summary_report.txt')
+                with open('reports/summary_report.txt', 'r') as f:
+                    summary_report = f.read()
+            elif isinstance(generator, SeabornCountplotGenerator):
+                generator.generate_report(df, output_file='reports/combined_chart.png')
+        chart_base64 = ""
+        chart_path = 'reports/combined_chart.png'
+        if os.path.exists(chart_path):
+            with open(chart_path, "rb") as img_file:
+                chart_base64 = base64.b64encode(img_file.read()).decode('utf-8')        
         template = Template(r"""
 <html>
 <head>
@@ -257,7 +291,7 @@ class CombinedReportGenerator(ReportGenerator):
     </div>
     <div id="chart" class="tabcontent">
         <h2>Chart</h2>
-        <img src="severity_chart.png" alt="Severity Chart" />
+        <img src="data:image/png;base64,{{ chart_base64 }}" alt="Severity Chart" />
     </div>
     <div id="summary-report" class="tabcontent">
         <h2>Summary Report</h2>
@@ -297,13 +331,14 @@ class CombinedReportGenerator(ReportGenerator):
                 generator.generate_report(df, output_file='reports/summary_report.txt')
                 with open('reports/summary_report.txt', 'r') as f:
                     summary_report = f.read()
+            elif isinstance(generator, SeabornCountplotGenerator):
+                generator.generate_report(df, output_file='reports/combined_chart.png')
 
-        html_content = template.render(html_report=html_report, summary_report=summary_report)
+        html_content = template.render(html_report=html_report, summary_report=summary_report, chart_base64=chart_base64)
 
         with open(output_file, 'w') as f:
             f.write(html_content)
 
-    
 class ReportAgent:
     def __init__(self, data_fetcher, report_generators, combined_report_generator=None):
         self.data_fetcher = data_fetcher
@@ -323,31 +358,86 @@ class ReportAgent:
         else:
             return "Failed to generate reports due to a database error."
 
-
-
 class GenerateReportsInput(BaseModel):
     query: str = "SQL query to fetch data for report generation"
 
+
 @tool(args_schema=GenerateReportsInput)
-def generate_reports(query: str):
+def generate_reports_tools(query: str):
+    
     """
-    Generates reports based on the provided SQL query.
-
-    Args:
-        query (str): The SQL query to fetch data for report generation.
-
-    Returns:
-        str: A message indicating whether the reports were generated successfully or not.
+    This function generates reports based on the provided input data.
     """
+
     connector = PostgresConnector()
     data_fetcher = DataFetcher(connector)
 
     html_generator = HTMLReportGenerator()
     matplotlib_generator = MatplotlibChartGenerator()
     summary_generator = SummaryReportGenerator()
-
-    report_generators = [html_generator, matplotlib_generator, summary_generator]
+    seaborn_generator = SeabornCountplotGenerator()
+    # Create a list of report generators    
+    report_generators = [html_generator, matplotlib_generator, summary_generator, seaborn_generator]
+    # Create a combined report generator
     combined_report_generator = CombinedReportGenerator(report_generators)
     report_agent = ReportAgent(data_fetcher, report_generators, combined_report_generator)
+    report_agent.generate_reports(query)
+    return "Report Generated"
 
-    return report_agent.generate_reports(query)
+class GenerateSQLQuery(BaseModel):
+    user_input: str = Field(description="The user input to be translated to SQL query to run.")
+    system_prompt: Any = Field(description="The prompt to be used to help the LLM generate the SQL query to run.")
+    llm: Any = Field(description="The LLM to use for generating the SQL query.")
+
+@tool(args_schema=GenerateSQLQuery)
+def generate_query(user_input: str, system_prompt: str, llm: Any) -> Dict[str, Any]:
+    """
+    Generates the SQL query based on the user input.
+    :param user_input: The user input.
+    :param system_prompt: The system prompt to use for generating the SQL query.
+    :param llm: The LLM to use for generating the SQL query.
+    :return: A dictionary containing the SQL query.
+    """
+    user_input = HumanMessage(content=user_input)
+    messages = [system_prompt, user_input]
+    response = llm.invoke(messages)
+    query = response.content
+    return {"query": query}
+
+class QueryInput(BaseModel):
+    query: str = Field(description="The SQL query for Postgres to run.")
+    params: Any = Field(description="The parameters for the query to configure it/optimize it.")
+
+@tool(args_schema=QueryInput)
+def run_query(query: str, params=None):
+    """
+    A tool to generate SQL query based on user input and run that query on the Postgres database.
+    :param query: The SQL query to run.
+    :param params: The parameters for the query to configure it/optimize it.
+    :return: The output of the SQL query.
+    """
+    try:
+        pg_connector = PostgresConnector()
+        response = pg_connector.run_query(query=query, params=params)
+    except Exception as e:
+        response = {"status": "error", "error": str(e)}
+    return response
+
+# Integrate the tools into the ReportAgent
+class ReportAgentWithTools(ReportAgent):
+    def __init__(self, data_fetcher, report_generators, combined_report_generator=None):
+        super().__init__(data_fetcher, report_generators, combined_report_generator)
+
+    def generate_reports_with_tools(self, table_name, columns, conditions=""):
+        query = generate_sql_query(table_name, columns, conditions)
+        df = run_query(query)
+        if df is not None:
+            for generator in self.report_generators:
+                generator.generate_report(df)
+            
+            if self.combined_report_generator:
+                self.combined_report_generator.generate_report(df)
+            
+            return "Reports generated successfully."
+        else:
+            return "Failed to generate reports due to a database error."

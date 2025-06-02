@@ -1,12 +1,16 @@
-+-------+---------+
-|       |   count |
-|-------+---------|
-| count |   5     |
-| mean  | 114.8   |
-| std   | 145.807 |
-| min   |   3     |
-| 25%   |  20     |
-| 50%   |  77     |
-| 75%   | 110     |
-| max   | 364     |
-+-------+---------+
+DevOps Chat Assist represents a significant advancement in DevOps tooling, offering a range of features and benefits that can greatly enhance the efficiency, collaboration, and reliability of DevOps teams. By leveraging this tool, organizations can achieve faster time to market, reduced costs, and improved customer satisfaction.
+===============================================================================================================================================
+
+Summary statistics for the dataset:
+```
+            count
+count    6.000000
+mean    95.666667
+std    138.422060
+min      1.000000
+25%      7.250000
+50%     48.500000
+75%    101.000000
+max    364.000000
+```
+
