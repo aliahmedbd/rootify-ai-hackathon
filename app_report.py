@@ -1,0 +1,160 @@
+# load environment variables
+from dotenv import load_dotenv
+_ = load_dotenv()
+
+import streamlit as st
+import streamlit.components.v1 as components
+from graphs.build_graph import build_supervisor_graph
+
+
+# initiate the graph_build
+print("Building the graph...")
+graph = build_supervisor_graph()
+print("Graph has been built.")
+
+# Streamlit UI components
+st.title("DevOpsAssist")
+st.sidebar.image('images/Finastra-logo.jpg', use_container_width=True)
+
+# --- Sidebar: Report generation query and button ---
+st.sidebar.markdown("## Generate Report")
+report_query = st.sidebar.text_input("Report Query", key="report_query")
+generate_report_clicked = st.sidebar.button("Generate Report")
+
+# --- Main UI: General chat input and response ---
+st.markdown("## General Chat")
+query = st.text_input("Type your query here", key="main_query")
+
+col1, col2 = st.columns([2, 5])
+# When query is submitted (Enter pressed)
+if query:
+    with col2:
+        st.markdown(
+            f"<div style='text-align: right; font-style: italic;'>{query}</div>",
+            unsafe_allow_html=True,
+        )
+    # Generate response (can still show spinner)
+    thread = {"configurable": {"thread_id": "1"}}
+
+    results = []
+    # Create a temporary placeholder for interim updates
+    placeholder = st.empty()
+
+    with st.spinner("Processing..."):
+        for output in graph.stream({
+                'user_input': query,
+                'supervisor_decision': '',
+                'tool_calls': '',
+                'agent_tool_retries': 0,
+                'agent_max_tool_retries': 3,
+                'postgres_query': '',
+                'postgres_agent_response': '',
+                'vector_db_agent_response': '',
+                'report_generation_requested': '',
+                'report_generation_response': '',
+                'final_response': '',
+                'memory_chain': []
+            }, thread):
+            
+            # Optionally print something useful during the stream
+            current_step = output.keys()
+            placeholder.markdown(f"Running step: `{list(current_step)[0]}`")  # Or any useful info
+            
+            results.append(output)
+
+    # Clear the placeholder after processing
+    placeholder.empty()
+
+    response = results[-1]['handle_response']['final_response']
+
+    st.markdown("\n")
+    st.markdown("\n")
+
+    col3, col4 = st.columns([5, 1])
+    with col3:
+        st.markdown(
+            f"<div style='text-align: left; font-style: italic;'>{response}</div>",
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("\n")
+    st.markdown("\n")
+
+    with st.expander("Show Full Model Process", expanded=False):
+        st.write("\n")
+        st.write("\n")
+        st.write(results[-1]['handle_response']['memory_chain'])
+
+    if results[-1]['handle_response']['report_generation_response'] == "Report Generated":
+        with open("reports/combined_report.html", "r") as file:
+            report_content = file.read()
+            components.html(
+                report_content,
+                height=800,
+                scrolling=True,
+            )
+        
+        # Add a download button for the report
+        st.download_button(
+            label="Download Report",
+            data=report_content,
+            file_name="report.html",
+            mime="text/html"
+        )
+    # Save query and response to session_state
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+    st.session_state.chat_history.append({
+        "query": query,
+        "response": response,
+        "raw": results[-1]['handle_response']['memory_chain']
+    })
+
+# --- Report Generation Section (Sidebar Button) ---
+if generate_report_clicked and report_query:
+    st.session_state['report_generation_result'] = None  # Clear previous result
+    with st.spinner("Generating report..."):
+        thread = {"configurable": {"thread_id": "report"}}
+        report_results = []
+        report_placeholder = st.empty()
+        for output in graph.stream({
+                'user_input': report_query,
+                'supervisor_decision': '',
+                'tool_calls': '',
+                'agent_tool_retries': 0,
+                'agent_max_tool_retries': 3,
+                'postgres_query': '',
+                'postgres_agent_response': '',
+                'vector_db_agent_response': '',
+                'report_generation_requested': '',
+                'report_generation_response': '',
+                'final_response': '',
+                'memory_chain': []
+            }, thread):
+            current_step = output.keys()
+            report_placeholder.markdown(f"Running step: `{list(current_step)[0]}`")
+            report_results.append(output)
+        report_placeholder.empty()
+
+        report_response = report_results[-1]['handle_response']['final_response']
+
+        st.markdown("### Report Generation Result")
+        st.markdown(f"<div style='font-style: italic;'>{report_response}</div>", unsafe_allow_html=True)
+
+        with st.expander("Show Full Model Process (Report Generation)", expanded=False):
+            st.write(report_results[-1]['handle_response']['memory_chain'])
+
+        if report_results[-1]['handle_response']['report_generation_response'] == "Report Generated":
+            with open("reports/combined_report.html", "r") as file:
+                report_content = file.read()
+                components.html(
+                    report_content,
+                    height=800,
+                    scrolling=True,
+                )
+            st.download_button(
+                label="Download Report",
+                data=report_content,
+                file_name="report.html",
+                mime="text/html"
+            )

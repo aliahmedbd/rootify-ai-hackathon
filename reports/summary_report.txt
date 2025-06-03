@@ -4,13 +4,13 @@ DevOps Chat Assist represents a significant advancement in DevOps tooling, offer
 Summary statistics for the dataset:
 ```
             count
-count    6.000000
-mean    95.666667
-std    138.422060
-min      1.000000
-25%      7.250000
-50%     48.500000
-75%    101.000000
+count    5.000000
+mean   114.800000
+std    145.807064
+min      3.000000
+25%     20.000000
+50%     77.000000
+75%    110.000000
 max    364.000000
 ```
 
