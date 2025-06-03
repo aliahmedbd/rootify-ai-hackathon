@@ -72,6 +72,7 @@ if query:
 
     col3, col4 = st.columns([5, 1])
     with col3:
+        # Display response left-aligned
         st.markdown(
             f"<div style='text-align: left; font-style: italic;'>{response}</div>",
             unsafe_allow_html=True,
@@ -88,6 +89,7 @@ if query:
     if results[-1]['handle_response']['report_generation_response'] == "Report Generated":
         with open("reports/combined_report.html", "r") as file:
             report_content = file.read()
+            # Display report left-aligned
             components.html(
                 report_content,
                 height=800,
@@ -139,7 +141,7 @@ if generate_report_clicked and report_query:
         report_response = report_results[-1]['handle_response']['final_response']
 
         st.markdown("### Report Generation Result")
-        st.markdown(f"<div style='font-style: italic;'>{report_response}</div>", unsafe_allow_html=True)
+#        st.markdown(f"<div style='font-style: italic;'>{report_response}</div>", unsafe_allow_html=True)
 
         with st.expander("Show Full Model Process (Report Generation)", expanded=False):
             st.write(report_results[-1]['handle_response']['memory_chain'])
@@ -147,6 +149,7 @@ if generate_report_clicked and report_query:
         if report_results[-1]['handle_response']['report_generation_response'] == "Report Generated":
             with open("reports/combined_report.html", "r") as file:
                 report_content = file.read()
+                # Display report left-aligned
                 components.html(
                     report_content,
                     height=800,
