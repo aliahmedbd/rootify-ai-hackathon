@@ -161,3 +161,14 @@ if generate_report_clicked and report_query:
                 file_name="report.html",
                 mime="text/html"
             )
+
+# --- Feedback Section (Sidebar) ---
+st.sidebar.markdown("---")
+st.sidebar.markdown("### Feedback")
+
+with st.sidebar.form("feedback_form"):
+    feedback_text = st.text_area("Your feedback", height=100)
+    submit_feedback = st.form_submit_button("Submit Feedback")
+    if submit_feedback and feedback_text.strip():
+        # You can save feedback to a file, database, or send to an API here
+        st.sidebar.success("Thank you for your feedback!")
