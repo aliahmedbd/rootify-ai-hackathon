@@ -20,7 +20,7 @@ st.sidebar.image('images/Finastra-logo.jpg', use_container_width=True)
 # --- Sidebar: Report generation query and parameters ---
 st.sidebar.markdown("## Generate Report")
 
-column_options = ["Issue Type", "Status", "Assignee", "Priority", "Created", "Resolved"]
+column_options = ["Issue Type", "Status", "Assignee"]
 agg_functions = ["COUNT", "SUM", "AVG", "MIN", "MAX"]
 chart_types = ["Bar", "Pie", "Line"]
 
