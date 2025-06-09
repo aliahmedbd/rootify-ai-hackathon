@@ -26,3 +26,10 @@ class TablesSchema:
         Resolution Details TEXT,
         Updated Date
     )"""
+
+    user_feedback_schema = """(
+        id SERIAL PRIMARY KEY,
+        username TEXT,
+        feedback TEXT,
+        submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )"""

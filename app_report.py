@@ -6,6 +6,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from graphs.build_graph import build_supervisor_graph
 from tools.report_generatorC_tools import generate_reports_tools
+import psycopg2
 
 
 # initiate the graph_build
@@ -160,5 +161,25 @@ with st.sidebar.form("feedback_form"):
     feedback_text = st.text_area("Your feedback", height=100)
     submit_feedback = st.form_submit_button("Submit Feedback")
     if submit_feedback and feedback_text.strip():
-        # You can save feedback to a file, database, or send to an API here
-        st.sidebar.success("Thank you for your feedback!")
+        try:
+            # Connect to your Postgres DB
+            conn = psycopg2.connect(
+                dbname="ibmclouddb",
+                user="ibm_cloud_9a3059c8_df57_4e99_ae38_a34e20de34d4",
+                password="qko9r5ISR5ip4BFD3nr7n4yP5g0ykT9A",
+                host="50e2a09d-d988-405b-b8de-7a885f365743.497129fd685f442ca4df759dd55ec01b.databases.appdomain.cloud",
+                port="31244"
+            )
+            cur = conn.cursor()
+            # Optionally, get username from session or input
+            username = "anonymous"  # Replace with actual user info if available
+            cur.execute(
+                "INSERT INTO user_feedback (username, feedback) VALUES (%s, %s);",
+                (username, feedback_text)
+            )
+            conn.commit()
+            cur.close()
+            conn.close()
+            st.sidebar.success("Thank you for your feedback!")
+        except Exception as e:
+            st.sidebar.error(f"Failed to submit feedback: {e}")

@@ -46,3 +46,28 @@ print('query is :', sql_query.group(0))
 response = PostgresConnector .validate_with_pglast_Latest(sql=sql_query.group(0))
 #response = PostgresConnector.validate_with_pglast_Latest(sql=query)
 print(response)
+
+import psycopg2
+
+# Define your connection details
+conn = psycopg2.connect(
+    dbname="ibmclouddb",
+    user="ibm_cloud_9a3059c8_df57_4e99_ae38_a34e20de34d4",
+    password="qko9r5ISR5ip4BFD3nr7n4yP5g0ykT9A",
+    host="50e2a09d-d988-405b-b8de-7a885f365743.497129fd685f442ca4df759dd55ec01b.databases.appdomain.cloud",
+    port="31244"
+)
+
+cur = conn.cursor()
+
+# List all tables in the public schema
+cur.execute("""
+    SELECT * from user_feedback;
+""")
+rows = cur.fetchall()
+print("Rows in the 'user_feedback' table:")
+for row in rows:
+    print(row)
+
+cur.close()
+conn.close()
