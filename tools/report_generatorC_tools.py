@@ -76,18 +76,10 @@ class SummaryReportGenerator(ReportGenerator):
     def generate_report(self, df, output_file='reports/summary_report.html'):
         with open(output_file, 'w') as f:
             # Introduction
-<<<<<<< HEAD
             f.write("<p>DevOps Chat Assist represents a significant advancement in DevOps tooling, offering a range of features and benefits that can greatly enhance the efficiency, collaboration, and reliability of DevOps teams. By leveraging this tool, organizations can achieve faster time to market, reduced costs, and improved customer satisfaction.</p><br/>")
 
             # Key Insights
             f.write("<h2><u><i>Key Insights</i></u></h2>")
-=======
-            f.write("<html><body><h1>DevOps Chat Assist Summary Report</h1>")
-            f.write("<p>DevOps Chat Assist represents a significant advancement in DevOps tooling, offering a range of features and benefits that can greatly enhance the efficiency, collaboration, and reliability of DevOps teams. By leveraging this tool, organizations can achieve faster time to market, reduced costs, and improved customer satisfaction.</p><br/>")
-
-            # Key Insights
-            f.write("<h2>Key Insights</h2>")
->>>>>>> c7a4580 (Updated report generation to display as explained summary report)
             f.write("<p>The analysis of the dataset reveals several key insights that can inform business decisions. These include:</p>")
             f.write("<table border='1'>")
             f.write("<tr><th>Row</th>")
@@ -102,11 +94,7 @@ class SummaryReportGenerator(ReportGenerator):
             f.write("</table><br/>")
 
             # Business Implications
-<<<<<<< HEAD
             f.write("<h2><u><i>Business Implications</i></u></h2>")
-=======
-            f.write("<h2>Business Implications</h2>")
->>>>>>> c7a4580 (Updated report generation to display as explained summary report)
             f.write("<p>The insights gained from this analysis have significant implications for the business. By leveraging DevOps Chat Assist, organizations can:</p>")
             f.write("<ul>")
             f.write("<li>Improve collaboration and communication among team members, leading to faster time to market and reduced costs.</li>")
@@ -114,11 +102,7 @@ class SummaryReportGenerator(ReportGenerator):
             f.write("</ul><br/>")
 
             # Recommendations
-<<<<<<< HEAD
             f.write("<h2><u><i>Recommendations</i></u></h2>")
-=======
-            f.write("<h2>Recommendations</h2>")
->>>>>>> c7a4580 (Updated report generation to display as explained summary report)
             f.write("<p>Based on the findings of this analysis, we recommend that organizations:</p>")
             f.write("<ul>")
             f.write("<li>Implement DevOps Chat Assist to streamline DevOps processes and improve collaboration.</li>")
@@ -126,11 +110,7 @@ class SummaryReportGenerator(ReportGenerator):
             f.write("</ul><br/>")
 
             # Conclusion
-<<<<<<< HEAD
             f.write("<h1><u><i>Conclusion</i></u></h1>")
-=======
-            f.write("<h1>Conclusion</h1>")
->>>>>>> c7a4580 (Updated report generation to display as explained summary report)
             f.write("<p>In conclusion, DevOps Chat Assist offers a range of benefits that can enhance the efficiency, collaboration, and reliability of DevOps teams. By leveraging this tool and following the recommendations outlined in this report, organizations can achieve significant improvements in their DevOps processes.</p>")
             f.write("</body></html>")
 
