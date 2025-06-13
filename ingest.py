@@ -2,7 +2,7 @@ import argparse
 from langchain_community.document_loaders import ConfluenceLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from uuid import uuid4
-from milvus_utils import get_vector_store
+from connectors.vector_db_connector import MilvusConnector
 import os
 
 
@@ -41,10 +41,13 @@ elif args.source == 'confluence':
     )
     documents = loader.load()
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=200)
+connector = MilvusConnector()
+
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=100)
 texts = text_splitter.split_documents(documents)
 uuids = [str(uuid4()) for _ in texts]
 
-vector_store = get_vector_store(drop_old=True)
+
+vector_store = connector.get_vector_store(drop_old=True)
 vector_store.add_documents(documents=texts, ids=uuids)
 print("✅ Documents successfully added")
