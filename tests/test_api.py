@@ -80,7 +80,7 @@ def test_postgres_query_data():
     """
     pg_connector = PostgresConnector()
     query = 'SELECT * FROM "TEST"'
-    query = "SELECT COUNT(*) FROM test2 WHERE status = 'closed';"
+    query = "SELECT COUNT(*) FROM jira_data;"
     data = pg_connector.query_data(query=query)
     return data
 
@@ -91,7 +91,7 @@ def test_milvus_search():
     """
     query = "What technologies are supported for containerized deployment of FCC application?"
     milvus_conn = MilvusConnector()
-    results = milvus_conn.search(query=query)
+    results = milvus_conn.similarity_search(query=query)
 
     print("\n🔍 Search Results:")
     for i, res in enumerate(results, 1):

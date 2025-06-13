@@ -1,6 +1,5 @@
 import argparse
 from dotenv import load_dotenv
-from tests.test_report_generator_tools import test_report_generation_tools
 _ = load_dotenv()
 
 from tests.test_api import (
@@ -23,7 +22,6 @@ _ = load_dotenv()
  
 # Function map
 FUNCTION_MAP = {
-    "test_report_generation_tools": test_report_generation_tools,
     "test_postgres_create_table": test_postgres_create_table,
     "test_postgres_insert_data": test_postgres_insert_data,
     "test_postgres_query_data": test_postgres_query_data,
