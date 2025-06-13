@@ -22,7 +22,7 @@ class PostGresAgent(BaseAgent):
         self.tools = [
             PostGresAgentTools.generate_query,
             PostGresAgentTools.validate_sql_query,
-            
+            PostGresAgentTools.run_query
             ]
 
         # the tools_dict enables the agent to call the tools by name.
@@ -113,6 +113,7 @@ class PostGresAgent(BaseAgent):
             state['memory_chain'].append({
                 'postgres_agent_response': state['postgres_agent_response']
             })
+
         except Exception as e:
             state['agent_tool_retries'] += 1
             pass
