@@ -7,6 +7,7 @@ import streamlit.components.v1 as components
 from graphs.build_graph import build_supervisor_graph
 from tools.report_generatorC_tools import generate_reports_tools
 import psycopg2
+import json
 
 
 @st.cache_resource
@@ -34,7 +35,7 @@ st.sidebar.markdown("## Generate Report")
 
 column_options = ["Issue Type", "Status", "Assignee"]
 agg_functions = ["COUNT", "SUM", "AVG", "MIN", "MAX"]
-chart_types = ["Bar", "Pie", "Line"]
+chart_types = ["bar", "pie", "line"]
 
 selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["Issue Type", "Status"])
 selected_agg = st.sidebar.selectbox("Aggregate Function", agg_functions)
@@ -146,7 +147,8 @@ if generate_report_clicked:
 
         # Call your report generation tool with the built query
         # If using generate_reports_tools as a LangChain tool:
-        result = generate_reports_tools(sql_query)
+        tool_input = {"query": sql_query, "chart_type": selected_chart.lower()}
+        generate_reports_tools(tool_input)
 
         st.success("Report triggered with your selected parameters.")
         # Optionally, display the report or a download button here

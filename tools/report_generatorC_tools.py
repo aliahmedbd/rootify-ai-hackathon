@@ -34,57 +34,98 @@ class HTMLReportGenerator(ReportGenerator):
 
 class MatplotlibChartGenerator(ReportGenerator):
     def __init__(self, chart_type="bar"):
-        self.chart_type = chart_type
+        self.chart_type = chart_type.lower()
 
     def generate_report(self, df, output_file='reports/severity_chart.png'):
+        print(f"Generating chart of type: {self.chart_type}")
         if df.empty:
             print("DataFrame is empty. Cannot generate chart.")
             return
-        column = df.columns[0]
+
+        # Detect columns
+        columns = df.columns.tolist()
+        if "agg_value" in columns:
+            # Assume last column is the aggregation
+            group_cols = columns[:-1]
+            agg_col = "agg_value"
+        else:
+            group_cols = [columns[0]]
+            agg_col = None
+
         plt.figure(figsize=(10, 6))
+
         if self.chart_type == "bar":
-            sns.countplot(x=column, data=df)
-            plt.title(f'Bar Chart of {column}')
+            if agg_col and len(group_cols) == 1:
+                sns.barplot(x=group_cols[0], y=agg_col, data=df)
+                plt.title(f'Bar Chart of {agg_col} by {group_cols[0]}')
+                plt.xlabel(group_cols[0])
+                plt.ylabel(agg_col)
+            elif agg_col and len(group_cols) > 1:
+                # Use first group col as x, second as hue
+                sns.barplot(x=group_cols[0], y=agg_col, hue=group_cols[1], data=df)
+                plt.title(f'Bar Chart of {agg_col} by {group_cols[0]} and {group_cols[1]}')
+                plt.xlabel(group_cols[0])
+                plt.ylabel(agg_col)
+            else:
+                sns.countplot(x=group_cols[0], data=df)
+                plt.title(f'Bar Chart of {group_cols[0]}')
+                plt.xlabel(group_cols[0])
+                plt.ylabel('Count')
+
         elif self.chart_type == "pie":
-            counts = df[column].value_counts()
-            plt.pie(counts, labels=counts.index, autopct='%1.1f%%')
-            plt.title(f'Pie Chart of {column}')
+            if agg_col and len(group_cols) == 1:
+                counts = df.set_index(group_cols[0])[agg_col]
+                plt.pie(counts, labels=counts.index, autopct='%1.1f%%')
+                plt.title(f'Pie Chart of {agg_col} by {group_cols[0]}')
+            else:
+                counts = df[group_cols[0]].value_counts()
+                plt.pie(counts, labels=counts.index, autopct='%1.1f%%')
+                plt.title(f'Pie Chart of {group_cols[0]}')
+
         elif self.chart_type == "line":
-            counts = df[column].value_counts().sort_index()
-            plt.plot(counts.index, counts.values, marker='o')
-            plt.title(f'Line Chart of {column}')
-            plt.xlabel(column)
-            plt.ylabel('Count')
+            if agg_col and len(group_cols) == 1:
+                plt.plot(df[group_cols[0]], df[agg_col], marker='o')
+                plt.title(f'Line Chart of {agg_col} by {group_cols[0]}')
+                plt.xlabel(group_cols[0])
+                plt.ylabel(agg_col)
+            else:
+                counts = df[group_cols[0]].value_counts().sort_index()
+                plt.plot(counts.index, counts.values, marker='o')
+                plt.title(f'Line Chart of {group_cols[0]}')
+                plt.xlabel(group_cols[0])
+                plt.ylabel('Count')
         else:
             print(f"Unknown chart type: {self.chart_type}")
             return
-        plt.savefig(output_file)
-        plt.close()
 
-
-class SeabornCountplotGenerator:
-    def generate_report(self, df, output_file='reports/combined_chart.png'):
-        if df.empty:
-            print("DataFrame is empty. Cannot generate chart.")
-            return
-        columns = df.columns.tolist()
-        if len(columns) < 2:
-            print("DataFrame must have at least two columns.")
-            return
-
-        x_column = columns[0]
-        hue_column = columns[1]
-        plt.figure(figsize=(10, 6))
-        if 'count' in columns:
-            sns.barplot(x=x_column, y='count', hue=hue_column, data=df)
-        else:
-            sns.countplot(x=x_column, hue=hue_column, data=df)
-        plt.title(f'Distribution of {hue_column} over {x_column}')
-        plt.xlabel(x_column)
-        plt.ylabel('Count')
         plt.tight_layout()
         plt.savefig(output_file)
         plt.close()
+
+
+# class SeabornCountplotGenerator:
+#     def generate_report(self, df, output_file='reports/combined_chart.png'):
+#         if df.empty:
+#             print("DataFrame is empty. Cannot generate chart.")
+#             return
+#         columns = df.columns.tolist()
+#         if len(columns) < 2:
+#             print("DataFrame must have at least two columns.")
+#             return
+
+#         x_column = columns[0]
+#         hue_column = columns[1]
+#         plt.figure(figsize=(10, 6))
+#         if 'count' in columns:
+#             sns.barplot(x=x_column, y='count', hue=hue_column, data=df)
+#         else:
+#             sns.countplot(x=x_column, hue=hue_column, data=df)
+#         plt.title(f'Distribution of {hue_column} over {x_column}')
+#         plt.xlabel(x_column)
+#         plt.ylabel('Count')
+#         plt.tight_layout()
+#         plt.savefig(output_file)
+#         plt.close()
 
 # SummaryReport
 
@@ -143,8 +184,9 @@ class DataFetcher:
         return df
 
 class CombinedReportGenerator(ReportGenerator):
-    def __init__(self, report_generators):
+    def __init__(self, report_generators, chart_type="bar"):
         self.report_generators = report_generators
+        self.chart_type = chart_type
 
     def generate_report(self, df, output_file='reports/combined_report.html'):
         html_report = ''
@@ -161,10 +203,14 @@ class CombinedReportGenerator(ReportGenerator):
                 generator.generate_report(df, output_file='reports/summary_report.txt')
                 with open('reports/summary_report.txt', 'r') as f:
                     summary_report = f.read()
-            elif isinstance(generator, SeabornCountplotGenerator):
-                generator.generate_report(df, output_file='reports/combined_chart.png')
+            # elif isinstance(generator, SeabornCountplotGenerator):
+            #     generator.generate_report(df, output_file='reports/combined_chart.png')
+        # Choose the correct chart file
+        if self.chart_type in ["pie", "line", "bar"]:
+            chart_path = 'reports/severity_chart.png'
+        else:
+            chart_path = 'reports/combined_chart.png'
         chart_base64 = ""
-        chart_path = 'reports/combined_chart.png'
         if os.path.exists(chart_path):
             with open(chart_path, "rb") as img_file:
                 chart_base64 = base64.b64encode(img_file.read()).decode('utf-8')        
@@ -182,10 +228,10 @@ class CombinedReportGenerator(ReportGenerator):
                 generator.generate_report(df, output_file='reports/summary_report.txt')
                 with open('reports/summary_report.txt', 'r') as f:
                     summary_report = f.read()
-            elif isinstance(generator, SeabornCountplotGenerator):
-                generator.generate_report(df, output_file='reports/combined_chart.png')
+            # elif isinstance(generator, SeabornCountplotGenerator):
+            #     generator.generate_report(df, output_file='reports/combined_chart.png')
         chart_base64 = ""
-        chart_path = 'reports/combined_chart.png'
+        chart_path = 'reports/severity_chart.png'
         if os.path.exists(chart_path):
             with open(chart_path, "rb") as img_file:
                 chart_base64 = base64.b64encode(img_file.read()).decode('utf-8')        
@@ -386,10 +432,10 @@ class CombinedReportGenerator(ReportGenerator):
                 generator.generate_report(df, output_file='reports/summary_report.txt')
                 with open('reports/summary_report.txt', 'r') as f:
                     summary_report = f.read()
-            elif isinstance(generator, SeabornCountplotGenerator):
-                generator.generate_report(df, output_file='reports/combined_chart.png')
-            elif isinstance(generator, SeabornCountplotGenerator):
-                generator.generate_report(df, output_file='reports/combined_chart.png')
+            # elif isinstance(generator, SeabornCountplotGenerator):
+            #     generator.generate_report(df, output_file='reports/combined_chart.png')
+            # elif isinstance(generator, SeabornCountplotGenerator):
+            #     generator.generate_report(df, output_file='reports/combined_chart.png')
 
         html_content = template.render(html_report=html_report, summary_report=summary_report, chart_base64=chart_base64)
 
@@ -417,6 +463,7 @@ class ReportAgent:
 
 class GenerateReportsInput(BaseModel):
     query: str = "SQL query to fetch data for report generation"
+    chart_type: str = "bar"
 
 
 
@@ -434,15 +481,11 @@ def generate_reports_tools(query: str, chart_type: str = "bar"):
     html_generator = HTMLReportGenerator()
     matplotlib_generator = MatplotlibChartGenerator(chart_type=chart_type)
     summary_generator = SummaryReportGenerator()
-    seaborn_generator = SeabornCountplotGenerator()
+    # seaborn_generator = SeabornCountplotGenerator()
     # Create a list of report generators    
-    report_generators = [html_generator, matplotlib_generator, summary_generator, seaborn_generator]
+    report_generators = [html_generator, matplotlib_generator, summary_generator]
     # Create a combined report generator
-    seaborn_generator = SeabornCountplotGenerator()
-    # Create a list of report generators    
-    report_generators = [html_generator, matplotlib_generator, summary_generator, seaborn_generator]
-    # Create a combined report generator
-    combined_report_generator = CombinedReportGenerator(report_generators)
+    combined_report_generator = CombinedReportGenerator(report_generators, chart_type=chart_type)
     report_agent = ReportAgent(data_fetcher, report_generators, combined_report_generator)
     report_agent.generate_reports(query)
     return "Report Generated"
