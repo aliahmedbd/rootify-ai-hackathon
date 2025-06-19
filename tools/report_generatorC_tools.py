@@ -33,17 +33,33 @@ class HTMLReportGenerator(ReportGenerator):
             f.write(html_table)
 
 class MatplotlibChartGenerator(ReportGenerator):
+    def __init__(self, chart_type="bar"):
+        self.chart_type = chart_type
+
     def generate_report(self, df, output_file='reports/severity_chart.png'):
-        if not df.empty:
-            column = df.columns[0]
-            plt.figure(figsize=(10, 6))
+        if df.empty:
+            print("DataFrame is empty. Cannot generate chart.")
+            return
+        column = df.columns[0]
+        plt.figure(figsize=(10, 6))
+        if self.chart_type == "bar":
             sns.countplot(x=column, data=df)
-            plt.title(f'Distribution of {column}')
+            plt.title(f'Bar Chart of {column}')
+        elif self.chart_type == "pie":
+            counts = df[column].value_counts()
+            plt.pie(counts, labels=counts.index, autopct='%1.1f%%')
+            plt.title(f'Pie Chart of {column}')
+        elif self.chart_type == "line":
+            counts = df[column].value_counts().sort_index()
+            plt.plot(counts.index, counts.values, marker='o')
+            plt.title(f'Line Chart of {column}')
             plt.xlabel(column)
             plt.ylabel('Count')
-            plt.savefig(output_file)
         else:
-            print("DataFrame is empty. Cannot generate chart.")
+            print(f"Unknown chart type: {self.chart_type}")
+            return
+        plt.savefig(output_file)
+        plt.close()
 
 
 class SeabornCountplotGenerator:
@@ -405,7 +421,7 @@ class GenerateReportsInput(BaseModel):
 
 
 @tool(args_schema=GenerateReportsInput)
-def generate_reports_tools(query: str):
+def generate_reports_tools(query: str, chart_type: str = "bar"):
     
     """
     This function generates reports based on the provided input data.
@@ -416,7 +432,7 @@ def generate_reports_tools(query: str):
     data_fetcher = DataFetcher(connector)
 
     html_generator = HTMLReportGenerator()
-    matplotlib_generator = MatplotlibChartGenerator()
+    matplotlib_generator = MatplotlibChartGenerator(chart_type=chart_type)
     summary_generator = SummaryReportGenerator()
     seaborn_generator = SeabornCountplotGenerator()
     # Create a list of report generators    
@@ -488,4 +504,4 @@ class ReportAgentWithTools(ReportAgent):
             return "Reports generated successfully."
         else:
             return "Failed to generate reports due to a database error."
-    
+
