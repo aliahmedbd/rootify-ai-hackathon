@@ -9,10 +9,21 @@ from tools.report_generatorC_tools import generate_reports_tools
 import psycopg2
 
 
-# initiate the graph_build
-print("Building the graph...")
-graph = build_supervisor_graph()
-print("Graph has been built.")
+@st.cache_resource
+
+def get_graph():
+
+    print("Building the graph...")
+
+    graph = build_supervisor_graph()
+
+    print("Graph has been built.")
+
+    return graph
+
+ 
+
+graph = get_graph()
 
 # Streamlit UI components
 st.title("DevOpsAssist")
