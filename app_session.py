@@ -1,6 +1,6 @@
 # load environment variables
 from dotenv import load_dotenv
-_ = load_dotenv()
+_ = load_dotenv(override=True)
 
 import streamlit as st
 from graphs.build_graph import build_supervisor_graph
