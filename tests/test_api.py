@@ -89,7 +89,7 @@ def test_milvus_search():
     """
     Test Milvus similarity search
     """
-    query = "What technologies are supported for containerized deployment of FCC application?"
+    query = "Does Tomcat 10.1.34 or 10.1.x supports open jdk 11?"
     milvus_conn = MilvusConnector()
     results = milvus_conn.similarity_search(query=query)
 

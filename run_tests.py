@@ -1,6 +1,6 @@
 import argparse
 from dotenv import load_dotenv
-_ = load_dotenv()
+_ = load_dotenv(override=True)
 
 from tests.test_api import (
     test_postgres_create_table, 
