@@ -11,15 +11,10 @@ import json
 
 
 @st.cache_resource
-
 def get_graph():
-
     print("Building the graph...")
-
     graph = build_supervisor_graph()
-
     print("Graph has been built.")
-
     return graph
 
  
