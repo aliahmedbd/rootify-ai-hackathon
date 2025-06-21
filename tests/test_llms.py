@@ -45,24 +45,24 @@ def test_vectordb_agent_tools():
                 'user_input': user_input,
                 'supervisor_decision': '',
                 'tool_calls': '',
-                'agent_tool_retries':'',
-                'agent_max_tool_retries': '',
+                'agent_tool_retries': 0,
+                'agent_max_tool_retries': 3,
+                'postgres_query': '',
+                'postgres_agent_response': '',
                 'vector_db_agent_response': '',
+                'report_generation_requested': '',
+                'report_generation_response': '',
                 'final_response': '',
                 'memory_chain': []
             }
     )
-    # supervisor = SupervisorAgent()
-    # state = supervisor.handle_input(state=state)
+    
     print(state)
     vector_db_agent = VectorDbAgent()
-    state = vector_db_agent.handle_input(state=state)
-    print("updated state", state)
 
-    state = vector_db_agent.use_vector_db_tools(state=state)
+    # test tool call.
+    state = vector_db_agent.vector_search(state=state)
     print("post tool use state \n", state)
-    state = vector_db_agent.handle_output(state=state)
-    print('after handle output calling:',state)
     breakpoint()
 
 

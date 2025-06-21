@@ -1,6 +1,7 @@
 # load environment variables
 from dotenv import load_dotenv
 _ = load_dotenv(override=True)
+import os
 
 import streamlit as st
 from graphs.build_graph import build_supervisor_graph
@@ -44,6 +45,7 @@ if query:
     results = []
     # Create a temporary placeholder for interim updates
     placeholder = st.empty()
+
 
     with st.spinner("Processing..."):
         for output in graph.stream({

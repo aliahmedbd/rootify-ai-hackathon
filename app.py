@@ -1,6 +1,6 @@
 # load environment variables
 from dotenv import load_dotenv
-_ = load_dotenv()
+_ = load_dotenv(override=True)
 
 import streamlit as st
 import streamlit.components.v1 as components
