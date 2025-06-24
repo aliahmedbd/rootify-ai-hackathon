@@ -288,33 +288,6 @@ with st.sidebar.form("feedback_form"):
         except Exception as e:
             st.sidebar.error(f"Failed to submit feedback: {e}")
 
-def send_report_via_outlook(
-    to_email,
-    subject="Your DevOpsAssist Report",
-    body="Please find the attached report.",
-    report_path="reports/combined_report.html",
-    from_email="sivajimanju11@gmail.com",
-    from_password="Manju777",
-    smtp_server="smtp.office365.com",
-    smtp_port=587
-):
-    # Read the report file
-    with open(report_path, "rb") as f:
-        report_data = f.read()
-
-    # Create the email
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = from_email
-    msg["To"] = to_email
-    msg.set_content(body)
-    msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
-
-    # Send the email via Outlook SMTP
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(from_email, from_password)
-        server.send_message(msg)
 
 def send_report_via_gmail(
     to_email,
