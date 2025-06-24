@@ -321,9 +321,9 @@ def send_report_via_gmail(
     subject="Your DevOpsAssist Report",
     body="Please find the attached report.",
     report_path="reports/combined_report.html",
-    from_email="sydney.waelchi@ethereal.email",         # <-- your Gmail address
-    from_password="heRX4bXF272rNkyRTW",   # <-- your Gmail App Password
-    smtp_server="smtp.ethereal.email",
+    from_email="sivajimanju11@gmail.com",         # <-- your Gmail address
+    from_password="yqny bukq oeit rsgd",         # <-- your Gmail App Password
+    smtp_server="smtp.gmail.com",
     smtp_port=587
 ):
     # Read the report file
@@ -339,9 +339,9 @@ def send_report_via_gmail(
     msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
 
     # Send the email via Gmail SMTP
-    with smtplib.SMTP("smtp.ethereal.email", 587) as server:
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
-        server.login("sydney.waelchi@ethereal.email", "heRX4bXF272rNkyRTW")
+        server.login(from_email, from_password)
         server.send_message(msg)
 
 with st.form("email_report_form"):
@@ -352,8 +352,8 @@ with st.form("email_report_form"):
         try:
             send_report_via_gmail(
                 to_email=to_email,
-                from_email="sydney.waelchi@ethereal.email",         # <-- your Gmail address
-                from_password="heRX4bXF272rNkyRTW",   # <-- your Gmail App Password
+                from_email="sivajimanju11@gmail.com",         # <-- your Gmail address
+                from_password="yqny bukq oeit rsgd",   # <-- your Gmail App Password
             )
             st.success(f"Report sent to {to_email}!")
         except Exception as e:
