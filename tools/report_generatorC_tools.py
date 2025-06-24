@@ -42,17 +42,19 @@ class MatplotlibChartGenerator(ReportGenerator):
             print("DataFrame is empty. Cannot generate chart.")
             return
 
-        # Detect columns
         columns = df.columns.tolist()
         if "agg_value" in columns:
-            # Assume last column is the aggregation
             group_cols = columns[:-1]
             agg_col = "agg_value"
         else:
             group_cols = [columns[0]]
             agg_col = None
 
-        plt.figure(figsize=(10, 6))
+        # Limit to top 30 categories for readability
+        if agg_col and len(df) > 30:
+            df = df.sort_values(by=agg_col, ascending=False).head(30)
+
+        plt.figure(figsize=(20, 10), constrained_layout=True)
 
         if self.chart_type == "bar":
             if agg_col and len(group_cols) == 1:
@@ -60,17 +62,19 @@ class MatplotlibChartGenerator(ReportGenerator):
                 plt.title(f'Bar Chart of {agg_col} by {group_cols[0]}')
                 plt.xlabel(group_cols[0])
                 plt.ylabel(agg_col)
+                plt.xticks(rotation=60, ha='right', fontsize=8)
             elif agg_col and len(group_cols) > 1:
-                # Use first group col as x, second as hue
                 sns.barplot(x=group_cols[0], y=agg_col, hue=group_cols[1], data=df)
                 plt.title(f'Bar Chart of {agg_col} by {group_cols[0]} and {group_cols[1]}')
                 plt.xlabel(group_cols[0])
                 plt.ylabel(agg_col)
+                plt.xticks(rotation=60, ha='right', fontsize=8)
             else:
                 sns.countplot(x=group_cols[0], data=df)
                 plt.title(f'Bar Chart of {group_cols[0]}')
                 plt.xlabel(group_cols[0])
                 plt.ylabel('Count')
+                plt.xticks(rotation=60, ha='right', fontsize=8)
 
         elif self.chart_type == "pie":
             if agg_col and len(group_cols) == 1:
@@ -98,7 +102,9 @@ class MatplotlibChartGenerator(ReportGenerator):
             print(f"Unknown chart type: {self.chart_type}")
             return
 
-        plt.tight_layout()
+        plt.xticks(rotation=30, ha='right')
+        plt.subplots_adjust(left=0.15, right=0.95, top=0.90, bottom=0.20)  # Add this line for more space
+        # Remove plt.tight_layout() if using constrained_layout
         plt.savefig(output_file)
         plt.close()
 

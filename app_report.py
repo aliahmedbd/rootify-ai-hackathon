@@ -28,15 +28,15 @@ st.sidebar.image('images/Finastra-logo.jpg', use_container_width=True)
 # --- Sidebar: Report generation query and parameters ---
 st.sidebar.markdown("## Generate Report")
 
-column_options = ["Issue Type", "Status", "Assignee"]
+column_options = ["Issue Type", "Status", "Assignee", "Summary", "Resolution", "Created"]
 agg_functions = ["COUNT", "SUM", "AVG", "MIN", "MAX"]
 chart_types = ["bar", "pie", "line"]
 
-selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["Issue Type", "Status"])
+selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["Issue Type"])
 selected_agg = st.sidebar.selectbox("Aggregate Function", agg_functions)
 selected_chart = st.sidebar.selectbox("Chart Type", chart_types)
 
-generate_report_clicked = st.sidebar.button("Generate Report")
+generate_report_clicked = st.sidebar.button("Generate Jira Inflows and Outflows Report")
 
 # --- Main UI: General chat input and response ---
 st.markdown("## General Chat")
@@ -191,3 +191,20 @@ with st.sidebar.form("feedback_form"):
             st.sidebar.success("Thank you for your feedback!")
         except Exception as e:
             st.sidebar.error(f"Failed to submit feedback: {e}")
+
+st.markdown("""
+    <style>
+    /* Dropdown options text in red */
+    div[data-baseweb="option"] {
+        color: #ff0000 !important;
+    }
+    /* Optionally: keep background white for contrast */
+    div[data-baseweb="option"] {
+        background-color: #fff !important;
+    }
+    /* If you want the selected value in the box to be red too: */
+    .stMultiSelect [data-baseweb="select"] span, .stSelectbox [data-baseweb="select"] span {
+        color: #ff0000 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
