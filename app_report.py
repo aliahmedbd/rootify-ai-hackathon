@@ -199,7 +199,7 @@ if generate_report_clicked:
     st.session_state["report_ready"] = True
     if selected_columns:
         group_by = ", ".join([f'"{column_map[col]}"' for col in selected_columns])
-        agg_col = column_map[selected_columns[0]]
+        agg_col = column_map[selected_columns[0]]  # You may want to let user pick this for SUM/AVG/MIN/MAX
         if selected_agg == "COUNT":
             agg_expr = "COUNT(*)"
         else:
@@ -288,19 +288,74 @@ with st.sidebar.form("feedback_form"):
         except Exception as e:
             st.sidebar.error(f"Failed to submit feedback: {e}")
 
-st.markdown("""
-    <style>
-    /* Dropdown options text in red */
-    div[data-baseweb="option"] {
-        color: #ff0000 !important;
-    }
-    /* Optionally: keep background white for contrast */
-    div[data-baseweb="option"] {
-        background-color: #fff !important;
-    }
-    /* If you want the selected value in the box to be red too: */
-    .stMultiSelect [data-baseweb="select"] span, .stSelectbox [data-baseweb="select"] span {
-        color: #ff0000 !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+def send_report_via_outlook(
+    to_email,
+    subject="Your DevOpsAssist Report",
+    body="Please find the attached report.",
+    report_path="reports/combined_report.html",
+    from_email="sivajimanju11@gmail.com",
+    from_password="Manju777",
+    smtp_server="smtp.office365.com",
+    smtp_port=587
+):
+    # Read the report file
+    with open(report_path, "rb") as f:
+        report_data = f.read()
+
+    # Create the email
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = from_email
+    msg["To"] = to_email
+    msg.set_content(body)
+    msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
+
+    # Send the email via Outlook SMTP
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(from_email, from_password)
+        server.send_message(msg)
+
+def send_report_via_gmail(
+    to_email,
+    subject="Your DevOpsAssist Report",
+    body="Please find the attached report.",
+    report_path="reports/combined_report.html",
+    from_email="sydney.waelchi@ethereal.email",         # <-- your Gmail address
+    from_password="heRX4bXF272rNkyRTW",   # <-- your Gmail App Password
+    smtp_server="smtp.ethereal.email",
+    smtp_port=587
+):
+    # Read the report file
+    with open(report_path, "rb") as f:
+        report_data = f.read()
+
+    # Create the email
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = from_email
+    msg["To"] = to_email
+    msg.set_content(body)
+    msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
+
+    # Send the email via Gmail SMTP
+    with smtplib.SMTP("smtp.ethereal.email", 587) as server:
+        server.starttls()
+        server.login("sydney.waelchi@ethereal.email", "heRX4bXF272rNkyRTW")
+        server.send_message(msg)
+
+with st.form("email_report_form"):
+    st.markdown("#### Email the generated report")
+    to_email = st.text_input("Recipient Email")
+    send_email = st.form_submit_button("Send Report")
+    if send_email and to_email:
+        try:
+            send_report_via_gmail(
+                to_email=to_email,
+                from_email="sydney.waelchi@ethereal.email",         # <-- your Gmail address
+                from_password="heRX4bXF272rNkyRTW",   # <-- your Gmail App Password
+            )
+            st.success(f"Report sent to {to_email}!")
+        except Exception as e:
+            st.error(f"Failed to send email: {e}")
+
