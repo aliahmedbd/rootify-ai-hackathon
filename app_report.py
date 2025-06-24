@@ -288,3 +288,19 @@ with st.sidebar.form("feedback_form"):
         except Exception as e:
             st.sidebar.error(f"Failed to submit feedback: {e}")
 
+st.markdown("""
+    <style>
+    /* Dropdown options text in red */
+    div[data-baseweb="option"] {
+        color: #ff0000 !important;
+    }
+    /* Optionally: keep background white for contrast */
+    div[data-baseweb="option"] {
+        background-color: #fff !important;
+    }
+    /* If you want the selected value in the box to be red too: */
+    .stMultiSelect [data-baseweb="select"] span, .stSelectbox [data-baseweb="select"] span {
+        color: #ff0000 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
