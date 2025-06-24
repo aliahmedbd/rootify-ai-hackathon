@@ -8,6 +8,9 @@ from graphs.build_graph import build_supervisor_graph
 from tools.report_generatorC_tools import generate_reports_tools
 import psycopg2
 import json
+from streamlit_option_menu import option_menu
+import smtplib
+from email.message import EmailMessage
 
 
 @st.cache_resource
@@ -28,11 +31,39 @@ st.sidebar.image('images/Finastra-logo.jpg', use_container_width=True)
 # --- Sidebar: Report generation query and parameters ---
 st.sidebar.markdown("## Generate Report")
 
-column_options = ["Issue Type", "Status", "Assignee", "Summary", "Resolution", "Created"]
-agg_functions = ["COUNT", "SUM", "AVG", "MIN", "MAX"]
-chart_types = ["bar", "pie", "line"]
+column_options = [
+    "🔴 Issue Type",
+    "🟢 Status",
+    "🔵 Assignee",
+    "🟡 Summary",
+    "🟣 Resolution",
+    "⚫ Created"
+]
 
-selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["Issue Type"])
+column_map = {
+    "🔴 Issue Type": "Issue Type",
+    "🟢 Status": "Status",
+    "🔵 Assignee": "Assignee",
+    "🟡 Summary": "Summary",
+    "🟣 Resolution": "Resolution",
+    "⚫ Created": "Created"
+}
+
+agg_functions = ["COUNT"]
+chart_types = [
+    "📊 bar",
+    "🥧 pie",
+    "📈 line"
+]
+chart_type_map = {
+    "📊 bar": "bar",
+    "🥧 pie": "pie",
+    "📈 line": "line",
+    "bar": "bar",
+    "pie": "pie",
+    "line": "line"
+}
+selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["🔴 Issue Type"])
 selected_agg = st.sidebar.selectbox("Aggregate Function", agg_functions)
 selected_chart = st.sidebar.selectbox("Chart Type", chart_types)
 
@@ -132,8 +163,8 @@ if query:
 # --- Report Generation Section ---
 if generate_report_clicked:
     if selected_columns:
-        group_by = ", ".join([f'"{col}"' for col in selected_columns])
-        agg_col = selected_columns[0]  # You may want to let user pick this for SUM/AVG/MIN/MAX
+        group_by = ", ".join([f'"{column_map[col]}"' for col in selected_columns])
+        agg_col = column_map[selected_columns[0]]  # You may want to let user pick this for SUM/AVG/MIN/MAX
         if selected_agg == "COUNT":
             agg_expr = "COUNT(*)"
         else:
@@ -142,7 +173,10 @@ if generate_report_clicked:
 
         # Call your report generation tool with the built query
         # If using generate_reports_tools as a LangChain tool:
-        tool_input = {"query": sql_query, "chart_type": selected_chart.lower()}
+        tool_input = {
+            "query": sql_query,
+            "chart_type": chart_type_map.get(selected_chart, "bar")
+        }
         generate_reports_tools(tool_input)
 
         st.success("Report triggered with your selected parameters.")
@@ -192,19 +226,74 @@ with st.sidebar.form("feedback_form"):
         except Exception as e:
             st.sidebar.error(f"Failed to submit feedback: {e}")
 
-st.markdown("""
-    <style>
-    /* Dropdown options text in red */
-    div[data-baseweb="option"] {
-        color: #ff0000 !important;
-    }
-    /* Optionally: keep background white for contrast */
-    div[data-baseweb="option"] {
-        background-color: #fff !important;
-    }
-    /* If you want the selected value in the box to be red too: */
-    .stMultiSelect [data-baseweb="select"] span, .stSelectbox [data-baseweb="select"] span {
-        color: #ff0000 !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+def send_report_via_outlook(
+    to_email,
+    subject="Your DevOpsAssist Report",
+    body="Please find the attached report.",
+    report_path="reports/combined_report.html",
+    from_email="sivajimanju11@gmail.com",
+    from_password="Manju777",
+    smtp_server="smtp.office365.com",
+    smtp_port=587
+):
+    # Read the report file
+    with open(report_path, "rb") as f:
+        report_data = f.read()
+
+    # Create the email
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = from_email
+    msg["To"] = to_email
+    msg.set_content(body)
+    msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
+
+    # Send the email via Outlook SMTP
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(from_email, from_password)
+        server.send_message(msg)
+
+def send_report_via_gmail(
+    to_email,
+    subject="Your DevOpsAssist Report",
+    body="Please find the attached report.",
+    report_path="reports/combined_report.html",
+    from_email="sydney.waelchi@ethereal.email",         # <-- your Gmail address
+    from_password="heRX4bXF272rNkyRTW",   # <-- your Gmail App Password
+    smtp_server="smtp.ethereal.email",
+    smtp_port=587
+):
+    # Read the report file
+    with open(report_path, "rb") as f:
+        report_data = f.read()
+
+    # Create the email
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = from_email
+    msg["To"] = to_email
+    msg.set_content(body)
+    msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
+
+    # Send the email via Gmail SMTP
+    with smtplib.SMTP("smtp.ethereal.email", 587) as server:
+        server.starttls()
+        server.login("sydney.waelchi@ethereal.email", "heRX4bXF272rNkyRTW")
+        server.send_message(msg)
+
+with st.form("email_report_form"):
+    st.markdown("#### Email the generated report")
+    to_email = st.text_input("Recipient Email")
+    send_email = st.form_submit_button("Send Report")
+    if send_email and to_email:
+        try:
+            send_report_via_gmail(
+                to_email=to_email,
+                from_email="sydney.waelchi@ethereal.email",         # <-- your Gmail address
+                from_password="heRX4bXF272rNkyRTW",   # <-- your Gmail App Password
+            )
+            st.success(f"Report sent to {to_email}!")
+        except Exception as e:
+            st.error(f"Failed to send email: {e}")
+
