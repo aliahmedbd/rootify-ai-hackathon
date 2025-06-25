@@ -13,6 +13,35 @@ import smtplib
 from email.message import EmailMessage
 
 
+def send_report_via_gmail(
+    to_email,
+    subject="Your DevOpsAssist Report",
+    body="Please find the attached report.",
+    report_path="reports/combined_report.html",
+    from_email="sivajimanju11@gmail.com",         # <-- your Gmail address
+    from_password="yqny bukq oeit rsgd",         # <-- your Gmail App Password
+    smtp_server="smtp.gmail.com",
+    smtp_port=587
+):
+    # Read the report file
+    with open(report_path, "rb") as f:
+        report_data = f.read()
+
+    # Create the email
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = from_email
+    msg["To"] = to_email
+    msg.set_content(body)
+    msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
+
+    # Send the email via Gmail SMTP
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(from_email, from_password)
+        server.send_message(msg)
+
+
 @st.cache_resource
 def get_graph():
     print("Building the graph...")
@@ -166,9 +195,11 @@ if query:
 
 # --- Report Generation Section ---
 if generate_report_clicked:
+    # Set a session flag to keep the report/email section visible
+    st.session_state["report_ready"] = True
     if selected_columns:
         group_by = ", ".join([f'"{column_map[col]}"' for col in selected_columns])
-        agg_col = column_map[selected_columns[0]]  # You may want to let user pick this for SUM/AVG/MIN/MAX
+        agg_col = column_map[selected_columns[0]]
         if selected_agg == "COUNT":
             agg_expr = "COUNT(*)"
         else:
@@ -176,7 +207,6 @@ if generate_report_clicked:
         sql_query = f"SELECT {group_by}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
 
         # Call your report generation tool with the built query
-        # If using generate_reports_tools as a LangChain tool:
         tool_input = {
             "query": sql_query,
             "chart_type": chart_type_map.get(selected_chart, "bar")
@@ -184,20 +214,48 @@ if generate_report_clicked:
         generate_reports_tools(tool_input)
 
         st.success("Report triggered with your selected parameters.")
-        # Optionally, display the report or a download button here
-        # (e.g., open and show reports/combined_report.html)
-        import streamlit.components.v1 as components
+        # Save report content to session state for later use
         with open("reports/combined_report.html", "r") as file:
             report_content = file.read()
-            components.html(report_content, height=800, scrolling=True)
+        st.session_state["report_content"] = report_content
+
+# Show report/email section if report is ready
+if st.session_state.get("report_ready", False):
+    import streamlit.components.v1 as components
+    report_content = st.session_state.get("report_content", "")
+    if report_content:
+        components.html(report_content, height=800, scrolling=True)
         st.download_button(
             label="Download Report",
             data=report_content,
             file_name="report.html",
             mime="text/html"
         )
-    else:
-        st.error("Please select at least one column for the report.")
+
+    # --- Email Report Section ---
+    with st.form("email_report_form"):
+        st.markdown("#### Email the generated report")
+        to_email = st.text_input("Recipient Email")
+        send_email = st.form_submit_button("Send Report")
+        if send_email and to_email:
+            try:
+                send_report_via_gmail(
+                    to_email=to_email,
+                    from_email="sivajimanju11@gmail.com",
+                    from_password="yqny bukq oeit rsgd",
+                )
+                st.session_state["email_status"] = f"Report sent to {to_email}!"
+                st.session_state["email_status_type"] = "success"
+            except Exception as e:
+                st.session_state["email_status"] = f"Failed to send email: {e}"
+                st.session_state["email_status_type"] = "error"
+
+    # Show email status message after form submission
+    if "email_status" in st.session_state:
+        if st.session_state["email_status_type"] == "success":
+            st.success(st.session_state["email_status"])
+        else:
+            st.error(st.session_state["email_status"])
 
 # --- Feedback Section (Sidebar) ---
 st.sidebar.markdown("---")
@@ -229,48 +287,4 @@ with st.sidebar.form("feedback_form"):
             st.sidebar.success("Thank you for your feedback!")
         except Exception as e:
             st.sidebar.error(f"Failed to submit feedback: {e}")
-
-
-def send_report_via_gmail(
-    to_email,
-    subject="Your DevOpsAssist Report",
-    body="Please find the attached report.",
-    report_path="reports/combined_report.html",
-    from_email="sivajimanju11@gmail.com",         # <-- your Gmail address
-    from_password="yqny bukq oeit rsgd",         # <-- your Gmail App Password
-    smtp_server="smtp.gmail.com",
-    smtp_port=587
-):
-    # Read the report file
-    with open(report_path, "rb") as f:
-        report_data = f.read()
-
-    # Create the email
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = from_email
-    msg["To"] = to_email
-    msg.set_content(body)
-    msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
-
-    # Send the email via Gmail SMTP
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(from_email, from_password)
-        server.send_message(msg)
-
-with st.form("email_report_form"):
-    st.markdown("#### Email the generated report")
-    to_email = st.text_input("Recipient Email")
-    send_email = st.form_submit_button("Send Report")
-    if send_email and to_email:
-        try:
-            send_report_via_gmail(
-                to_email=to_email,
-                from_email="sivajimanju11@gmail.com",         # <-- your Gmail address
-                from_password="yqny bukq oeit rsgd",   # <-- your Gmail App Password
-            )
-            st.success(f"Report sent to {to_email}!")
-        except Exception as e:
-            st.error(f"Failed to send email: {e}")
 
