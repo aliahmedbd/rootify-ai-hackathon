@@ -37,7 +37,9 @@ column_options = [
     "🔵 Assignee",
     "🟡 Summary",
     "🟣 Resolution",
-    "⚫ Created"
+    "⚫ Created",
+    "🔵 Key",
+    "🔴 Priority",
 ]
 
 column_map = {
@@ -46,7 +48,9 @@ column_map = {
     "🔵 Assignee": "Assignee",
     "🟡 Summary": "Summary",
     "🟣 Resolution": "Resolution",
-    "⚫ Created": "Created"
+    "⚫ Created": "Created",
+    "🔵 Key": "Key",
+    "🔴 Priority": "Priority",
 }
 
 agg_functions = ["COUNT"]
