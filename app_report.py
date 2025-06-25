@@ -11,6 +11,21 @@ import json
 from streamlit_option_menu import option_menu
 import smtplib
 from email.message import EmailMessage
+# Hide Streamlit's "Running..." spinner and status messages
+st.markdown("""
+    <style>
+    /* Hide the status widget and spinner overlay */
+    .stStatusWidget, .stStatusWidget > div {display: none !important;}
+    .st-emotion-cache-1v0mbdj {display: none !important;}
+    /* Hide the main running spinner and its text */
+    .stSpinner, .stSpinner > div, .stSpinner > div > div {display: none !important;}
+    /* Hide the "Running..." text that appears in the center */
+    .stAlert, .stNotification, .stMarkdown p {color: transparent !important;}
+    /* Hide the top-right running bar */
+    header [data-testid="stStatusWidget"] {display: none !important;}
+    </style>
+""", unsafe_allow_html=True)
+
 
 
 def send_report_via_gmail(
@@ -49,9 +64,7 @@ def get_graph():
     print("Graph has been built.")
     return graph
 
- 
-
-graph = get_graph()
+graph = get_graph() 
 
 # Streamlit UI components
 st.title("DevOpsAssist")
@@ -287,4 +300,7 @@ with st.sidebar.form("feedback_form"):
             st.sidebar.success("Thank you for your feedback!")
         except Exception as e:
             st.sidebar.error(f"Failed to submit feedback: {e}")
+
+with st.spinner("Starting the application..."):
+    graph = get_graph()
 
