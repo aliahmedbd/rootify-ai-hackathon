@@ -18,5 +18,5 @@ class vectorDbAgentTools:
         """
 
         vdb_connector = MilvusConnector()
-        response = vdb_connector.similarity_search(query=query, k=k)
+        response = vdb_connector.search_milvus(query_text=query, top_k=k)
         return response

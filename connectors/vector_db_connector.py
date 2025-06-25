@@ -1,6 +1,7 @@
-from langchain_milvus import Milvus
 from langchain_ibm.embeddings import WatsonxEmbeddings
 import os
+from pymilvus import connections
+from pymilvus import Collection
 
 
 class MilvusConnector:
@@ -17,6 +18,23 @@ class MilvusConnector:
 
         self.milvus = None
 
+        try:
+            conn = connections.connect(
+                alias="default",
+                uri=f"grpc://{os.environ['grpcHost']}:{os.environ['grpcPort']}",
+                user=os.environ['milvusUser'],
+                password=os.environ['milvusPass'],
+                secure=True
+            )
+            print("Connected to Milvus successfully.")
+            return conn
+        
+        except Exception as e:
+            import traceback
+            print("Milvus connection failed.")
+            print(traceback.format_exc())
+
+
     def get_embedding_model(self):
         return WatsonxEmbeddings(
             model_id=self.em_model,
@@ -24,33 +42,30 @@ class MilvusConnector:
             project_id=os.environ["WATSONX_PROJECT_ID"],
             apikey=os.environ['WATSONX_APIKEY']
         )
-
-    def get_vector_store(self, collection_name="DevOpsAssist", drop_old=False):
-        embeddings = self.get_embedding_model()
-        self.milvus = Milvus(
-            collection_name=collection_name,
-            embedding_function=embeddings,
-            connection_args={
-                "uri": self.milvus_uri,
-                "user": self.milvus_user,
-                "password": self.milvus_password,
-                "secure": True
-            },
-            index_params=self.milvus_index_params,
-            consistency_level="Strong",
-            drop_old=drop_old
-        )
-        return self.milvus
     
-    def similarity_search(self, query, k=3):
-        """
-        Conduct a similarity search on the vector store for the selected collection.
-        """
-        if self.milvus is None:
-            vector_store = self.get_vector_store()
-        else:
-            vector_store = self.milvus
-            
-        # Perform the similarity search
-        results = vector_store.similarity_search(query=query, k=k)
+
+    def search_milvus(self, query_text: str, top_k: int = 3, collection_name: str="DevOpsAssist"):
+        # Embed the query text
+        embedding_model = self.get_embedding_model()
+        query_vector = embedding_model.embed_query(query_text)
+
+        # Load the collection
+        collection = Collection(name=collection_name)
+        collection.load()
+
+        # Perform search
+        search_params = {
+            "metric_type": "L2",      # or "IP" or "COSINE" depending on how your index was built
+            "params": {"nprobe": 10}  # tune for accuracy/speed
+        }
+
+        results = collection.search(
+            data=[query_vector],              # query vectors
+            anns_field="vector",           # name of the vector field
+            param=search_params,
+            limit=top_k,
+            output_fields=["text"]            # optional: fields to return
+        )
+
         return results
+
