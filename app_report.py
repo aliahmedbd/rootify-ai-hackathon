@@ -109,9 +109,14 @@ chart_type_map = {
     "pie": "pie",
     "line": "line"
 }
+
 selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["🔴 Issue Type"])
 selected_agg = st.sidebar.selectbox("Aggregate Function", agg_functions)
 selected_chart = st.sidebar.selectbox("Chart Type", chart_types)
+
+# --- New Widget: Aggregate By ---
+aggregate_by_options = ["Week", "Month", "3 Months"]
+selected_aggregate_by = st.sidebar.selectbox("Aggregate by", aggregate_by_options)
 
 generate_report_clicked = st.sidebar.button("Generate Jira Inflows and Outflows Report")
 
@@ -213,11 +218,32 @@ if generate_report_clicked:
     if selected_columns:
         group_by = ", ".join([f'"{column_map[col]}"' for col in selected_columns])
         agg_col = column_map[selected_columns[0]]
+
+        # --- Aggregate by logic ---
+        # Assume your table has a "Created" column with date/time
+        if selected_aggregate_by == "Week":
+            time_group = "DATE_TRUNC('week', \"Created\")"
+        elif selected_aggregate_by == "Month":
+            time_group = "DATE_TRUNC('month', \"Created\")"
+        elif selected_aggregate_by == "3 Months":
+            time_group = "DATE_TRUNC('quarter', \"Created\")"
+        else:
+            time_group = None
+
+        # Add time_group to group_by if not already present
+        if time_group and time_group not in group_by:
+            group_by = f"{group_by}, {time_group}"
+
         if selected_agg == "COUNT":
             agg_expr = "COUNT(*)"
         else:
             agg_expr = f"{selected_agg}(\"{agg_col}\")"
-        sql_query = f"SELECT {group_by}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
+
+        # Add time_group to SELECT if used
+        if time_group:
+            sql_query = f"SELECT {group_by}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
+        else:
+            sql_query = f"SELECT {group_by}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
 
         # Call your report generation tool with the built query
         tool_input = {
