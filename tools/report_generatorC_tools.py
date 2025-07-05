@@ -31,8 +31,7 @@ class HTMLReportGenerator(ReportGenerator):
         html_table = df.to_html()
         with open(output_file, 'w') as f:
             f.write(html_table)
-
-class MatplotlibChartGenerator(ReportGenerator):
+class MatplotlibChartGenerator:
     def __init__(self, chart_type="bar"):
         self.chart_type = chart_type.lower()
 
@@ -58,23 +57,26 @@ class MatplotlibChartGenerator(ReportGenerator):
 
         if self.chart_type == "bar":
             if agg_col and len(group_cols) == 1:
-                sns.barplot(x=group_cols[0], y=agg_col, data=df)
+                ax = sns.barplot(x=group_cols[0], y=agg_col, data=df)
                 plt.title(f'Bar Chart of {agg_col} by {group_cols[0]}')
                 plt.xlabel(group_cols[0])
                 plt.ylabel(agg_col)
                 plt.xticks(rotation=60, ha='right', fontsize=8)
+                self._annotate_bars(ax)
             elif agg_col and len(group_cols) > 1:
-                sns.barplot(x=group_cols[0], y=agg_col, hue=group_cols[1], data=df)
+                ax = sns.barplot(x=group_cols[0], y=agg_col, hue=group_cols[1], data=df)
                 plt.title(f'Bar Chart of {agg_col} by {group_cols[0]} and {group_cols[1]}')
                 plt.xlabel(group_cols[0])
                 plt.ylabel(agg_col)
                 plt.xticks(rotation=60, ha='right', fontsize=8)
+                self._annotate_bars(ax)
             else:
-                sns.countplot(x=group_cols[0], data=df)
+                ax = sns.countplot(x=group_cols[0], data=df)
                 plt.title(f'Bar Chart of {group_cols[0]}')
                 plt.xlabel(group_cols[0])
                 plt.ylabel('Count')
                 plt.xticks(rotation=60, ha='right', fontsize=8)
+                self._annotate_bars(ax)
 
         elif self.chart_type == "pie":
             if agg_col and len(group_cols) == 1:
@@ -103,10 +105,88 @@ class MatplotlibChartGenerator(ReportGenerator):
             return
 
         plt.xticks(rotation=30, ha='right')
-        plt.subplots_adjust(left=0.15, right=0.95, top=0.90, bottom=0.20)  # Add this line for more space
-        # Remove plt.tight_layout() if using constrained_layout
+        plt.subplots_adjust(left=0.15, right=0.95, top=0.90, bottom=0.20)  
         plt.savefig(output_file)
         plt.close()
+
+    def _annotate_bars(self, ax):
+        for p in ax.patches:
+            ax.annotate(f'{p.get_height():.1f}', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 10), textcoords='offset points')
+# class MatplotlibChartGenerator(ReportGenerator):
+#     def __init__(self, chart_type="bar"):
+#         self.chart_type = chart_type.lower()
+
+#     def generate_report(self, df, output_file='reports/severity_chart.png'):
+#         print(f"Generating chart of type: {self.chart_type}")
+#         if df.empty:
+#             print("DataFrame is empty. Cannot generate chart.")
+#             return
+
+#         columns = df.columns.tolist()
+#         if "agg_value" in columns:
+#             group_cols = columns[:-1]
+#             agg_col = "agg_value"
+#         else:
+#             group_cols = [columns[0]]
+#             agg_col = None
+
+#         # Limit to top 30 categories for readability
+#         if agg_col and len(df) > 30:
+#             df = df.sort_values(by=agg_col, ascending=False).head(30)
+
+#         plt.figure(figsize=(20, 10), constrained_layout=True)
+
+#         if self.chart_type == "bar":
+#             if agg_col and len(group_cols) == 1:
+#                 sns.barplot(x=group_cols[0], y=agg_col, data=df)
+#                 plt.title(f'Bar Chart of {agg_col} by {group_cols[0]}')
+#                 plt.xlabel(group_cols[0])
+#                 plt.ylabel(agg_col)
+#                 plt.xticks(rotation=60, ha='right', fontsize=8)
+#             elif agg_col and len(group_cols) > 1:
+#                 sns.barplot(x=group_cols[0], y=agg_col, hue=group_cols[1], data=df)
+#                 plt.title(f'Bar Chart of {agg_col} by {group_cols[0]} and {group_cols[1]}')
+#                 plt.xlabel(group_cols[0])
+#                 plt.ylabel(agg_col)
+#                 plt.xticks(rotation=60, ha='right', fontsize=8)
+#             else:
+#                 sns.countplot(x=group_cols[0], data=df)
+#                 plt.title(f'Bar Chart of {group_cols[0]}')
+#                 plt.xlabel(group_cols[0])
+#                 plt.ylabel('Count')
+#                 plt.xticks(rotation=60, ha='right', fontsize=8)
+
+#         elif self.chart_type == "pie":
+#             if agg_col and len(group_cols) == 1:
+#                 counts = df.set_index(group_cols[0])[agg_col]
+#                 plt.pie(counts, labels=counts.index, autopct='%1.1f%%')
+#                 plt.title(f'Pie Chart of {agg_col} by {group_cols[0]}')
+#             else:
+#                 counts = df[group_cols[0]].value_counts()
+#                 plt.pie(counts, labels=counts.index, autopct='%1.1f%%')
+#                 plt.title(f'Pie Chart of {group_cols[0]}')
+
+#         elif self.chart_type == "line":
+#             if agg_col and len(group_cols) == 1:
+#                 plt.plot(df[group_cols[0]], df[agg_col], marker='o')
+#                 plt.title(f'Line Chart of {agg_col} by {group_cols[0]}')
+#                 plt.xlabel(group_cols[0])
+#                 plt.ylabel(agg_col)
+#             else:
+#                 counts = df[group_cols[0]].value_counts().sort_index()
+#                 plt.plot(counts.index, counts.values, marker='o')
+#                 plt.title(f'Line Chart of {group_cols[0]}')
+#                 plt.xlabel(group_cols[0])
+#                 plt.ylabel('Count')
+#         else:
+#             print(f"Unknown chart type: {self.chart_type}")
+#             return
+
+        # plt.xticks(rotation=30, ha='right')
+        # plt.subplots_adjust(left=0.15, right=0.95, top=0.90, bottom=0.20)  # Add this line for more space
+        # # Remove plt.tight_layout() if using constrained_layout
+        # plt.savefig(output_file)
+        # plt.close()
 
 
 # class SeabornCountplotGenerator:

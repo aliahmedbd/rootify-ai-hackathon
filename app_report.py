@@ -79,7 +79,6 @@ column_options = [
     "🔵 Assignee",
     "🟡 Summary",
     "🟣 Resolution",
-    "⚫ Created",
     "🔵 Key",
     "🔴 Priority",
 ]
@@ -90,7 +89,6 @@ column_map = {
     "🔵 Assignee": "Assignee",
     "🟡 Summary": "Summary",
     "🟣 Resolution": "Resolution",
-    "⚫ Created": "Created",
     "🔵 Key": "Key",
     "🔴 Priority": "Priority",
 }
@@ -213,50 +211,58 @@ if query:
 
 # --- Report Generation Section ---
 if generate_report_clicked:
-    # Set a session flag to keep the report/email section visible
     st.session_state["report_ready"] = True
+
+    # --- Aggregate by logic ---
+    # Always group by the created date (time_group)
+    if selected_aggregate_by == "Week":
+        time_group = "DATE_TRUNC('week', \"Created\")"
+    elif selected_aggregate_by == "Month":
+        time_group = "DATE_TRUNC('month', \"Created\")"
+    elif selected_aggregate_by == "3 Months":
+        time_group = "DATE_TRUNC('quarter', \"Created\")"
+    else:
+        time_group = "\"Created\""
+
+    # Build group_by and select_list
+    group_by_list = []
+    select_list = []
+
+    # Add selected columns (if any)
     if selected_columns:
-        group_by = ", ".join([f'"{column_map[col]}"' for col in selected_columns])
-        agg_col = column_map[selected_columns[0]]
+        for col in selected_columns:
+            db_col = f'"{column_map[col]}"'
+            group_by_list.append(db_col)
+            select_list.append(db_col)
 
-        # --- Aggregate by logic ---
-        # Assume your table has a "Created" column with date/time
-        if selected_aggregate_by == "Week":
-            time_group = "DATE_TRUNC('week', \"Created\")"
-        elif selected_aggregate_by == "Month":
-            time_group = "DATE_TRUNC('month', \"Created\")"
-        elif selected_aggregate_by == "3 Months":
-            time_group = "DATE_TRUNC('quarter', \"Created\")"
-        else:
-            time_group = None
+    # Always add the time_group (period)
+    group_by_list.append(time_group)
+    select_list.append(f"{time_group} as period")
 
-        # Add time_group to group_by if not already present
-        if time_group and time_group not in group_by:
-            group_by = f"{group_by}, {time_group}"
+    # Aggregate expression
+    agg_col = column_map[selected_columns[0]] if selected_columns else "Created"
+    if selected_agg == "COUNT":
+        agg_expr = "COUNT(*)"
+    else:
+        agg_expr = f"{selected_agg}(\"{agg_col}\")"
 
-        if selected_agg == "COUNT":
-            agg_expr = "COUNT(*)"
-        else:
-            agg_expr = f"{selected_agg}(\"{agg_col}\")"
+    # Build SQL query: always groups by period
+    group_by = ", ".join(group_by_list)
+    select_clause = ", ".join(select_list)
+    sql_query = f"SELECT {select_clause}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
 
-        # Add time_group to SELECT if used
-        if time_group:
-            sql_query = f"SELECT {group_by}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
-        else:
-            sql_query = f"SELECT {group_by}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
+    # Call your report generation tool with the built query
+    tool_input = {
+        "query": sql_query,
+        "chart_type": chart_type_map.get(selected_chart, "bar")
+    }
+    generate_reports_tools(tool_input)
 
-        # Call your report generation tool with the built query
-        tool_input = {
-            "query": sql_query,
-            "chart_type": chart_type_map.get(selected_chart, "bar")
-        }
-        generate_reports_tools(tool_input)
-
-        st.success("Report triggered with your selected parameters.")
-        # Save report content to session state for later use
-        with open("reports/combined_report.html", "r") as file:
-            report_content = file.read()
-        st.session_state["report_content"] = report_content
+    st.success("Report triggered with your selected parameters.")
+    # Save report content to session state for later use
+    with open("reports/combined_report.html", "r") as file:
+        report_content = file.read()
+    st.session_state["report_content"] = report_content
 
 # Show report/email section if report is ready
 if st.session_state.get("report_ready", False):
