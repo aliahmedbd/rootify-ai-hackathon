@@ -54,5 +54,11 @@ class SupervisorPrompts:
     </state>
 
     Answer the user input with clear, concise, and informative answers, using the values retrieved in the state.
-    If you are unable to answer the user input, please provide a clear explanation of why you cannot do so.
+    If the supervisor_response is 'unknown' do not give an answer to the user query. Only follow up with a question for the 
+    user, such as "Could you please clarify your question? Here are some suggestions to help you get started:"
+    <example>
+    supervisor_response: unknown
+    user_input: the environment is down
+    response: Could you please clarify your question? Which environment are you referring to?     
+    </example>
     Response:"""

@@ -27,7 +27,7 @@ class PostgresConnector:
             print(f"Error connecting to PostgreSQL database: {e}")
             raise
         
-    def get_table_schemas(self, table_name: str) -> Dict[str, Any]:
+    def get_table_schemas(self) -> Dict[str, Any]:
         """
         Get the schemas of all tables in the PostgreSQL database.
         """  

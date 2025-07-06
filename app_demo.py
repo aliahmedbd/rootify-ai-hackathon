@@ -7,7 +7,6 @@ import streamlit.components.v1 as components
 from graphs.build_graph import build_supervisor_graph
 from tools.report_generatorC_tools import generate_reports_tools
 import psycopg2
-import json
 from streamlit_option_menu import option_menu
 import smtplib
 from email.message import EmailMessage
@@ -69,9 +68,10 @@ graph = get_graph()
 # Streamlit UI components
 st.title("DevOpsAssist")
 st.sidebar.image('images/Finastra-logo.jpg', use_container_width=True)
+st.sidebar.image('images/devops.jpg', use_container_width=True)
 
 # --- Sidebar: Report generation query and parameters ---
-st.sidebar.markdown("## Generate Report")
+st.sidebar.markdown("## Generate Jira Inflows and Outflows Report")
 
 column_options = [
     "🔴 Issue Type",
@@ -79,7 +79,6 @@ column_options = [
     "🔵 Assignee",
     "🟡 Summary",
     "🟣 Resolution",
-    "⚫ Created",
     "🔵 Key",
     "🔴 Priority",
 ]
@@ -90,7 +89,6 @@ column_map = {
     "🔵 Assignee": "Assignee",
     "🟡 Summary": "Summary",
     "🟣 Resolution": "Resolution",
-    "⚫ Created": "Created",
     "🔵 Key": "Key",
     "🔴 Priority": "Priority",
 }
@@ -109,12 +107,18 @@ chart_type_map = {
     "pie": "pie",
     "line": "line"
 }
+
 selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["🔴 Issue Type"])
 selected_agg = st.sidebar.selectbox("Aggregate Function", agg_functions)
 selected_chart = st.sidebar.selectbox("Chart Type", chart_types)
 
-generate_report_clicked = st.sidebar.button("Generate Jira Inflows and Outflows Report")
+# --- New Widget: Aggregate By ---
+aggregate_by_options = ["Week", "Month", "3 Months"]
+selected_aggregate_by = st.sidebar.selectbox("Aggregate by", aggregate_by_options)
 
+generate_report_clicked = st.sidebar.button("Generate Report")
+
+# --- Main UI: General chat input and response ---
 # Initialize session state to store chat history and query input
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -127,19 +131,12 @@ for chat_history in st.session_state.chat_history:
     with st.chat_message(chat_history["role"]):
         st.markdown(chat_history["content"])
 
-# --- Main UI: General chat input and response ---
+# Get user input
+query = st.chat_input("Type your query here")
 
-query = st.chat_input("Type your query here", key="main_query")
-
-# col1, col2 = st.columns([2, 5])
-# # When query is submitted (Enter pressed)
+# When query is submitted (Enter pressed)
 if query:
-    # with col2:
-    #     st.markdown(
-    #         f"<div style='text-align: right; font-style: italic;'>{query}</div>",
-    #         unsafe_allow_html=True,
-    #     )
-        # Show user input immediately
+    # Show user input immediately
     with st.chat_message("user"):
         st.markdown(query)
 
@@ -214,7 +211,7 @@ if query:
             mime="text/html"
         )
 
-        # Save user message
+    # Save user message
     st.session_state.chat_history.append({
         "role": "user",
         "content": query
@@ -228,41 +225,61 @@ if query:
     # Clear the input field
     st.session_state.query_input = ""
 
-    # #st.experimental_rerun()
-    # # Save query and response to session_state
-    # if "chat_history" not in st.session_state:
-    #     st.session_state.chat_history = []
-    # st.session_state.chat_history.append({
-    #     "query": query,
-    #     "response": response,
-    #     "raw": results[-1]['handle_response']['memory_chain']
-    # })
 
 # --- Report Generation Section ---
 if generate_report_clicked:
-    # Set a session flag to keep the report/email section visible
     st.session_state["report_ready"] = True
+
+    # --- Aggregate by logic ---
+    # Always group by the created date (time_group)
+    if selected_aggregate_by == "Week":
+        time_group = "DATE_TRUNC('week', \"Created\")"
+    elif selected_aggregate_by == "Month":
+        time_group = "DATE_TRUNC('month', \"Created\")"
+    elif selected_aggregate_by == "3 Months":
+        time_group = "DATE_TRUNC('quarter', \"Created\")"
+    else:
+        time_group = "\"Created\""
+
+    # Build group_by and select_list
+    group_by_list = []
+    select_list = []
+
+    # Add selected columns (if any)
     if selected_columns:
-        group_by = ", ".join([f'"{column_map[col]}"' for col in selected_columns])
-        agg_col = column_map[selected_columns[0]]
-        if selected_agg == "COUNT":
-            agg_expr = "COUNT(*)"
-        else:
-            agg_expr = f"{selected_agg}(\"{agg_col}\")"
-        sql_query = f"SELECT {group_by}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
+        for col in selected_columns:
+            db_col = f'"{column_map[col]}"'
+            group_by_list.append(db_col)
+            select_list.append(db_col)
 
-        # Call your report generation tool with the built query
-        tool_input = {
-            "query": sql_query,
-            "chart_type": chart_type_map.get(selected_chart, "bar")
-        }
-        generate_reports_tools(tool_input)
+    # Always add the time_group (period)
+    group_by_list.append(time_group)
+    select_list.append(f"{time_group} as period")
 
-        st.success("Report triggered with your selected parameters.")
-        # Save report content to session state for later use
-        with open("reports/combined_report.html", "r") as file:
-            report_content = file.read()
-        st.session_state["report_content"] = report_content
+    # Aggregate expression
+    agg_col = column_map[selected_columns[0]] if selected_columns else "Created"
+    if selected_agg == "COUNT":
+        agg_expr = "COUNT(*)"
+    else:
+        agg_expr = f"{selected_agg}(\"{agg_col}\")"
+
+    # Build SQL query: always groups by period
+    group_by = ", ".join(group_by_list)
+    select_clause = ", ".join(select_list)
+    sql_query = f"SELECT {select_clause}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
+
+    # Call your report generation tool with the built query
+    tool_input = {
+        "query": sql_query,
+        "chart_type": chart_type_map.get(selected_chart, "bar")
+    }
+    generate_reports_tools(tool_input)
+
+    st.success("Report triggered with your selected parameters.")
+    # Save report content to session state for later use
+    with open("reports/combined_report.html", "r") as file:
+        report_content = file.read()
+    st.session_state["report_content"] = report_content
 
 # Show report/email section if report is ready
 if st.session_state.get("report_ready", False):
