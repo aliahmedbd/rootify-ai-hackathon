@@ -66,12 +66,12 @@ def get_graph():
 graph = get_graph() 
 
 # Streamlit UI components
-st.title("DevOpsAssist")
-st.sidebar.image('images/Finastra-logo.jpg', use_container_width=True)
-st.sidebar.image('images/devops.jpg', use_container_width=True)
+st.title("RootCauseAssist")
+st.sidebar.image('images/natwest_logo.jpg', use_container_width=True)
+st.sidebar.image('images/watsonx_logo.jpg', use_container_width=True)
 
 # --- Sidebar: Report generation query and parameters ---
-st.sidebar.markdown("## Generate Jira Inflows and Outflows Report")
+st.sidebar.markdown("## Generate Report")
 
 column_options = [
     "🔴 Issue Type",
