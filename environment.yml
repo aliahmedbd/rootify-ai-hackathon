@@ -1,4 +1,4 @@
-name: devops_agent_env
+name: toilmate_agent_env
 channels:
   - defaults
   - conda-forge
