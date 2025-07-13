@@ -10,29 +10,15 @@ import psycopg2
 from streamlit_option_menu import option_menu
 import smtplib
 from email.message import EmailMessage
-# Hide Streamlit's "Running..." spinner and status messages
-# st.markdown("""
-#     <style>
-#     /* Hide the status widget and spinner overlay */
-#     .stStatusWidget, .stStatusWidget > div {display: none !important;}
-#     .st-emotion-cache-1v0mbdj {display: none !important;}
-#     /* Hide the main running spinner and its text */
-#     .stSpinner, .stSpinner > div, .stSpinner > div > div {display: none !important;}
-#     /* Hide the "Running..." text that appears in the center */
-#     .stAlert, .stNotification, .stMarkdown p {color: transparent !important;}
-#     /* Hide the top-right running bar */
-#     header [data-testid="stStatusWidget"] {display: none !important;}
-#     </style>
-# """, unsafe_allow_html=True)
 
 
 
 def send_report_via_gmail(
     to_email,
-    subject="Your DevOpsAssist Report",
+    subject="Your Report",
     body="Please find the attached report.",
     report_path="reports/combined_report.html",
-    from_email="sivajimanju11@gmail.com",         # <-- your Gmail address
+    from_email="safal.mukhia@gmail.com",         # <-- your Gmail address
     from_password="yqny bukq oeit rsgd",         # <-- your Gmail App Password
     smtp_server="smtp.gmail.com",
     smtp_port=587
@@ -66,7 +52,7 @@ def get_graph():
 graph = get_graph() 
 
 # Streamlit UI components
-st.title("RootCauseAssist")
+st.title("ToilMate: NatWest Hackathon Demo")
 st.sidebar.image('images/natwest_logo.jpg', use_container_width=True)
 st.sidebar.image('images/watsonx_logo.jpg', use_container_width=True)
 
