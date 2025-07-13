@@ -8,38 +8,7 @@ from graphs.build_graph import build_supervisor_graph
 from tools.report_generatorC_tools import generate_reports_tools
 import psycopg2
 from streamlit_option_menu import option_menu
-import smtplib
-from email.message import EmailMessage
 
-
-
-def send_report_via_gmail(
-    to_email,
-    subject="Your Report",
-    body="Please find the attached report.",
-    report_path="reports/combined_report.html",
-    from_email="safal.mukhia@gmail.com",         # <-- your Gmail address
-    from_password="yqny bukq oeit rsgd",         # <-- your Gmail App Password
-    smtp_server="smtp.gmail.com",
-    smtp_port=587
-):
-    # Read the report file
-    with open(report_path, "rb") as f:
-        report_data = f.read()
-
-    # Create the email
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = from_email
-    msg["To"] = to_email
-    msg.set_content(body)
-    msg.add_attachment(report_data, maintype="text", subtype="html", filename="report.html")
-
-    # Send the email via Gmail SMTP
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(from_email, from_password)
-        server.send_message(msg)
 
 
 @st.cache_resource
@@ -280,30 +249,6 @@ if st.session_state.get("report_ready", False):
             mime="text/html"
         )
 
-    # --- Email Report Section ---
-    with st.form("email_report_form"):
-        st.markdown("#### Email the generated report")
-        to_email = st.text_input("Recipient Email")
-        send_email = st.form_submit_button("Send Report")
-        if send_email and to_email:
-            try:
-                send_report_via_gmail(
-                    to_email=to_email,
-                    from_email="sivajimanju11@gmail.com",
-                    from_password="yqny bukq oeit rsgd",
-                )
-                st.session_state["email_status"] = f"Report sent to {to_email}!"
-                st.session_state["email_status_type"] = "success"
-            except Exception as e:
-                st.session_state["email_status"] = f"Failed to send email: {e}"
-                st.session_state["email_status_type"] = "error"
-
-    # Show email status message after form submission
-    if "email_status" in st.session_state:
-        if st.session_state["email_status_type"] == "success":
-            st.success(st.session_state["email_status"])
-        else:
-            st.error(st.session_state["email_status"])
 
 # --- Feedback Section (Sidebar) ---
 st.sidebar.markdown("---")
