@@ -3,6 +3,11 @@ import os
 from pymilvus import connections
 from pymilvus import Collection
 
+from langchain_chroma import Chroma
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
+
 
 class MilvusConnector:
     def __init__(self):
@@ -69,3 +74,45 @@ class MilvusConnector:
 
         return results
 
+
+
+class ChromaDB():
+
+    def __init__(self):
+        """
+        The ChromaDB pipeline!
+        """
+        self.embedding_model = "ibm-granite/granite-embedding-30m-english"
+        self.persist_directory = "./chroma_db"
+        self.embedding_function = HuggingFaceEmbeddings(model_name="ibm-granite/granite-embedding-30m-english")
+        self.pdf_path = "data/ventilation_doc.pdf"
+    
+    def ingest_documents(self, pdf_path, collection_name="pdf_collection", chunk_size=500, chunk_overlap=50):
+        # Load the PDF document
+        loader = PyPDFLoader(pdf_path)
+        documents = loader.load()
+
+        # Split the document into chunks
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        docs = text_splitter.split_documents(documents)
+
+        # Create the Chroma vector store
+        vectordb = Chroma(
+            collection_name=collection_name,
+            embedding_function=self.embedding_function,
+            persist_directory=self.persist_directory
+        )
+
+        # Add documents to the vector store
+        vectordb.add_documents(docs)
+
+        print(f"Successfully ingested {len(docs)} chunks into Chroma at '{self.persist_directory}'.")
+
+    def search(self, query, collection='pdf_collection'):
+        vectordb = Chroma(
+        collection_name=collection,
+        persist_directory=self.persist_directory,
+        embedding_function=self.embedding_function
+        )
+
+        return vectordb.similarity_search(query, k=3)

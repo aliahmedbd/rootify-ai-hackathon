@@ -21,57 +21,57 @@ def get_graph():
 graph = get_graph() 
 
 # Streamlit UI components
-st.title("ToilMate: NatWest Hackathon Demo")
+st.title("Rootify - NatWest Demo")
 st.sidebar.image('images/natwest_logo.jpg', use_container_width=True)
 st.sidebar.image('images/watsonx_logo.jpg', use_container_width=True)
 
-# --- Sidebar: Report generation query and parameters ---
-st.sidebar.markdown("## Generate Report")
+# # --- Sidebar: Report generation query and parameters ---
+# st.sidebar.markdown("## Generate Report")
 
-column_options = [
-    "🔴 Issue Type",
-    "🟢 Status",
-    "🔵 Assignee",
-    "🟡 Summary",
-    "🟣 Resolution",
-    "🔵 Key",
-    "🔴 Priority",
-]
+# column_options = [
+#     "🔴 Issue Type",
+#     "🟢 Status",
+#     "🔵 Assignee",
+#     "🟡 Summary",
+#     "🟣 Resolution",
+#     "🔵 Key",
+#     "🔴 Priority",
+# ]
 
-column_map = {
-    "🔴 Issue Type": "Issue Type",
-    "🟢 Status": "Status",
-    "🔵 Assignee": "Assignee",
-    "🟡 Summary": "Summary",
-    "🟣 Resolution": "Resolution",
-    "🔵 Key": "Key",
-    "🔴 Priority": "Priority",
-}
+# column_map = {
+#     "🔴 Issue Type": "Issue Type",
+#     "🟢 Status": "Status",
+#     "🔵 Assignee": "Assignee",
+#     "🟡 Summary": "Summary",
+#     "🟣 Resolution": "Resolution",
+#     "🔵 Key": "Key",
+#     "🔴 Priority": "Priority",
+# }
 
-agg_functions = ["COUNT"]
-chart_types = [
-    "📊 bar",
-    "🥧 pie",
-    "📈 line"
-]
-chart_type_map = {
-    "📊 bar": "bar",
-    "🥧 pie": "pie",
-    "📈 line": "line",
-    "bar": "bar",
-    "pie": "pie",
-    "line": "line"
-}
+# agg_functions = ["COUNT"]
+# chart_types = [
+#     "📊 bar",
+#     "🥧 pie",
+#     "📈 line"
+# ]
+# chart_type_map = {
+#     "📊 bar": "bar",
+#     "🥧 pie": "pie",
+#     "📈 line": "line",
+#     "bar": "bar",
+#     "pie": "pie",
+#     "line": "line"
+# }
 
-selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["🔴 Issue Type"])
-selected_agg = st.sidebar.selectbox("Aggregate Function", agg_functions)
-selected_chart = st.sidebar.selectbox("Chart Type", chart_types)
+# selected_columns = st.sidebar.multiselect("Select columns", column_options, default=["🔴 Issue Type"])
+# selected_agg = st.sidebar.selectbox("Aggregate Function", agg_functions)
+# selected_chart = st.sidebar.selectbox("Chart Type", chart_types)
 
-# --- New Widget: Aggregate By ---
-aggregate_by_options = ["Week", "Month", "3 Months"]
-selected_aggregate_by = st.sidebar.selectbox("Aggregate by", aggregate_by_options)
+# # --- New Widget: Aggregate By ---
+# aggregate_by_options = ["Week", "Month", "3 Months"]
+# selected_aggregate_by = st.sidebar.selectbox("Aggregate by", aggregate_by_options)
 
-generate_report_clicked = st.sidebar.button("Generate Report")
+# generate_report_clicked = st.sidebar.button("Generate Report")
 
 # --- Main UI: General chat input and response ---
 # Initialize session state to store chat history and query input
@@ -181,60 +181,60 @@ if query:
     st.session_state.query_input = ""
 
 
-# --- Report Generation Section ---
-if generate_report_clicked:
-    st.session_state["report_ready"] = True
+# # --- Report Generation Section ---
+# if generate_report_clicked:
+#     st.session_state["report_ready"] = True
 
-    # --- Aggregate by logic ---
-    # Always group by the created date (time_group)
-    if selected_aggregate_by == "Week":
-        time_group = "DATE_TRUNC('week', \"Created\")"
-    elif selected_aggregate_by == "Month":
-        time_group = "DATE_TRUNC('month', \"Created\")"
-    elif selected_aggregate_by == "3 Months":
-        time_group = "DATE_TRUNC('quarter', \"Created\")"
-    else:
-        time_group = "\"Created\""
+#     # --- Aggregate by logic ---
+#     # Always group by the created date (time_group)
+#     if selected_aggregate_by == "Week":
+#         time_group = "DATE_TRUNC('week', \"Created\")"
+#     elif selected_aggregate_by == "Month":
+#         time_group = "DATE_TRUNC('month', \"Created\")"
+#     elif selected_aggregate_by == "3 Months":
+#         time_group = "DATE_TRUNC('quarter', \"Created\")"
+#     else:
+#         time_group = "\"Created\""
 
-    # Build group_by and select_list
-    group_by_list = []
-    select_list = []
+#     # Build group_by and select_list
+#     group_by_list = []
+#     select_list = []
 
-    # Add selected columns (if any)
-    if selected_columns:
-        for col in selected_columns:
-            db_col = f'"{column_map[col]}"'
-            group_by_list.append(db_col)
-            select_list.append(db_col)
+#     # Add selected columns (if any)
+#     if selected_columns:
+#         for col in selected_columns:
+#             db_col = f'"{column_map[col]}"'
+#             group_by_list.append(db_col)
+#             select_list.append(db_col)
 
-    # Always add the time_group (period)
-    group_by_list.append(time_group)
-    select_list.append(f"{time_group} as period")
+#     # Always add the time_group (period)
+#     group_by_list.append(time_group)
+#     select_list.append(f"{time_group} as period")
 
-    # Aggregate expression
-    agg_col = column_map[selected_columns[0]] if selected_columns else "Created"
-    if selected_agg == "COUNT":
-        agg_expr = "COUNT(*)"
-    else:
-        agg_expr = f"{selected_agg}(\"{agg_col}\")"
+#     # Aggregate expression
+#     agg_col = column_map[selected_columns[0]] if selected_columns else "Created"
+#     if selected_agg == "COUNT":
+#         agg_expr = "COUNT(*)"
+#     else:
+#         agg_expr = f"{selected_agg}(\"{agg_col}\")"
 
-    # Build SQL query: always groups by period
-    group_by = ", ".join(group_by_list)
-    select_clause = ", ".join(select_list)
-    sql_query = f"SELECT {select_clause}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
+#     # Build SQL query: always groups by period
+#     group_by = ", ".join(group_by_list)
+#     select_clause = ", ".join(select_list)
+#     sql_query = f"SELECT {select_clause}, {agg_expr} as agg_value FROM jira_data GROUP BY {group_by}"
 
-    # Call your report generation tool with the built query
-    tool_input = {
-        "query": sql_query,
-        "chart_type": chart_type_map.get(selected_chart, "bar")
-    }
-    generate_reports_tools(tool_input)
+#     # Call your report generation tool with the built query
+#     tool_input = {
+#         "query": sql_query,
+#         "chart_type": chart_type_map.get(selected_chart, "bar")
+#     }
+#     generate_reports_tools(tool_input)
 
-    st.success("Report triggered with your selected parameters.")
-    # Save report content to session state for later use
-    with open("reports/combined_report.html", "r") as file:
-        report_content = file.read()
-    st.session_state["report_content"] = report_content
+#     st.success("Report triggered with your selected parameters.")
+#     # Save report content to session state for later use
+#     with open("reports/combined_report.html", "r") as file:
+#         report_content = file.read()
+#     st.session_state["report_content"] = report_content
 
 # Show report/email section if report is ready
 if st.session_state.get("report_ready", False):
