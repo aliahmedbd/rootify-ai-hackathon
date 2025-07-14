@@ -104,6 +104,23 @@ class PostgresConnector:
             self.conn.close()
             print("PostgreSQL database connection closed.")
 
+    def get_lookup_data(self, params=None):
+        """
+        Get lookup data from the database.
+        :param params: Optional parameters for the query.
+        :return: A list of dictionaries containing the lookup data.
+        """
+        query = """
+            SELECT *
+            FROM patterns_lookup;
+        """
+        
+        with self.conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(query, params or ())
+            results = cur.fetchall()
+        
+        return results
+
 
     def run_query(self, query, params=None):
         """

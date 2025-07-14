@@ -1,0 +1,10 @@
+id,pattern_tag,solution,example
+1,DATA_VALIDATION,Check input schema validation in data-service. Ensure client payloads conform to expected format.,2024-04-01T10:15:32 | abc123xyz789 | clientA | ERROR | Invalid payload: missing required field 'email' | data-service
+2,AUTH_FAIL,Investigate repeated login failures in auth-service. Check for brute-force attempts or credential issues.,"2024-04-01T09:02:11 | def456uvw123 | clientB | WARN | Login attempt failed for user 'admin' | auth-service
+(any logs can follow here)
+2024-04-01T09:02:15 | def456uvw123 | clientB | ERROR | Account locked due to multiple failed login attempts | auth-service"
+3,TIMEOUT_RETRY,Review retry policy in retry-controller. Downstream service may be overloaded or unreachable.,"2024-04-01T11:45:00 | ghi789rst456 | clientC | WARN | Timeout while calling inventory-service | retry-controller
+(any logs can follow here)
+2024-04-01T11:45:05 | ghi789rst456 | clientC | INFO | Retrying request to inventory-service | retry-controller
+(any logs can follow here)
+2024-04-01T11:45:10 | ghi789rst456 | clientC | ERROR | Retry failed after 3 attempts | retry-controller"

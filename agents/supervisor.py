@@ -66,6 +66,20 @@ class SupervisorAgent(BaseAgent):
         else:  
             # if no decision is made, return END to stop the graph.
             return "handle_response"
+        
+    @staticmethod
+    def router_2(state: AgentState):
+        """Routing based on supervisor's response"""
+        
+        decision = state['supervisor_decision']
+ 
+        if "pattern_found" in decision:
+            return "handle_response"
+        elif "pattern_not_found" in decision:
+            return "unhappy_path"
+        else:  
+            # if no decision is made, return END to stop the graph.
+            return END
     
     def handle_output(self, state: AgentState):
         """

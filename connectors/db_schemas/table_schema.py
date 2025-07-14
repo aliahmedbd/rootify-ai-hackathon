@@ -4,6 +4,13 @@ Store schemas for tables to help with construction of queries
 
 class TablesSchema:
 
+    patterns_lookup_schema = """(
+        id SERIAL PRIMARY KEY,
+        pattern_tag TEXT,
+        solution TEXT,
+        example TEXT
+    )"""
+
     postgres_metadata_schema = """(
         id SERIAL PRIMARY KEY,
         query TEXT,

@@ -1,0 +1,200 @@
+2024-04-01T08:00:00 | ug3s0fubdquh | clientA | DEBUG | Processing request | retry-controller
+2024-04-01T08:00:05 | s43lltglyp6z | clientA | DEBUG | Session validated | data-service
+2024-04-01T08:00:10 | z9fjn8rcr4xh | clientC | INFO | Processing request | auth-service
+2024-04-01T08:00:15 | s43lltglyp6z | clientC | INFO | Response sent | data-service
+2024-04-01T08:00:20 | s43lltglyp6z | clientA | WARN | Token refreshed | auth-service
+2024-04-01T08:00:25 | 0je7aiftqmim | clientC | WARN | Session validated | retry-controller
+2024-04-01T08:00:30 | 3e37cpy0imr5 | clientA | WARN | Cache lookup complete | data-service
+2024-04-01T08:00:35 | bl68d8xjtmx6 | clientB | INFO | Request received | inventory-service
+2024-04-01T08:00:40 | z9fjn8rcr4xh | clientA | WARN | Token refreshed | auth-service
+2024-04-01T08:00:45 | 0je7aiftqmim | clientA | INFO | Request received | data-service
+2024-04-01T08:00:50 | ocv5qs3rfnl6 | clientB | DEBUG | Calling downstream service | data-service
+2024-04-01T08:00:55 | v3s7usmhilgo | clientB | WARN | Request received | data-service
+2024-04-01T08:01:00 | v3s7usmhilgo | clientB | DEBUG | Processing request | auth-service
+2024-04-01T08:01:05 | ug3s0fubdquh | clientC | DEBUG | Token refreshed | data-service
+2024-04-01T08:01:10 | ocv5qs3rfnl6 | clientC | INFO | Cache lookup complete | inventory-service
+2024-04-01T08:01:15 | ocv5qs3rfnl6 | clientB | INFO | Token refreshed | retry-controller
+2024-04-01T08:01:20 | s43lltglyp6z | clientB | WARN | Response sent | inventory-service
+2024-04-01T08:01:25 | ug3s0fubdquh | clientB | INFO | Session validated | inventory-service
+2024-04-01T08:01:30 | 3e37cpy0imr5 | clientC | INFO | Response sent | retry-controller
+2024-04-01T08:01:35 | zuvqkvd96pus | clientC | DEBUG | Calling downstream service | inventory-service
+2024-04-01T08:01:40 | 0je7aiftqmim | clientB | WARN | Token refreshed | inventory-service
+2024-04-01T08:01:45 | ug3s0fubdquh | clientB | WARN | Response sent | auth-service
+2024-04-01T08:01:50 | ocv5qs3rfnl6 | clientC | INFO | Session validated | data-service
+2024-04-01T08:01:55 | s43lltglyp6z | clientA | WARN | Response sent | inventory-service
+2024-04-01T08:02:00 | 8v5cvu3ko2yc | clientA | WARN | Cache lookup complete | auth-service
+2024-04-01T08:02:05 | v3s7usmhilgo | clientC | INFO | Cache lookup complete | data-service
+2024-04-01T08:02:10 | s43lltglyp6z | clientB | WARN | Processing request | retry-controller
+2024-04-01T08:02:15 | 3e37cpy0imr5 | clientC | INFO | Session validated | inventory-service
+2024-04-01T08:02:20 | ug3s0fubdquh | clientA | DEBUG | Processing request | data-service
+2024-04-01T08:02:25 | bl68d8xjtmx6 | clientC | WARN | Cache lookup complete | inventory-service
+2024-04-01T08:02:30 | s43lltglyp6z | clientA | INFO | Processing request | data-service
+2024-04-01T08:02:35 | 0je7aiftqmim | clientA | WARN | Token refreshed | inventory-service
+2024-04-01T08:02:40 | zuvqkvd96pus | clientC | DEBUG | Token refreshed | retry-controller
+2024-04-01T08:02:45 | s43lltglyp6z | clientC | INFO | Session validated | data-service
+2024-04-01T08:02:50 | 0je7aiftqmim | clientC | INFO | Processing request | retry-controller
+2024-04-01T08:02:55 | 3e37cpy0imr5 | clientA | INFO | Response sent | inventory-service
+2024-04-01T08:03:00 | 3e37cpy0imr5 | clientC | DEBUG | Response sent | retry-controller
+2024-04-01T08:03:05 | s43lltglyp6z | clientB | DEBUG | Session validated | data-service
+2024-04-01T08:03:10 | s43lltglyp6z | clientC | DEBUG | Token refreshed | auth-service
+2024-04-01T08:03:15 | ocv5qs3rfnl6 | clientB | DEBUG | Cache lookup complete | auth-service
+2024-04-01T08:03:20 | 8v5cvu3ko2yc | clientA | DEBUG | Cache lookup complete | inventory-service
+2024-04-01T08:03:25 | z9fjn8rcr4xh | clientA | DEBUG | Token refreshed | auth-service
+2024-04-01T08:03:30 | 3e37cpy0imr5 | clientA | DEBUG | Calling downstream service | inventory-service
+2024-04-01T08:03:35 | bl68d8xjtmx6 | clientC | DEBUG | Session validated | retry-controller
+2024-04-01T08:03:40 | ocv5qs3rfnl6 | clientC | WARN | Session validated | inventory-service
+2024-04-01T08:03:45 | z9fjn8rcr4xh | clientC | WARN | Cache lookup complete | data-service
+2024-04-01T08:03:50 | zuvqkvd96pus | clientB | WARN | Request received | retry-controller
+2024-04-01T08:03:55 | s43lltglyp6z | clientB | DEBUG | Response sent | auth-service
+2024-04-01T08:04:00 | z9fjn8rcr4xh | clientA | DEBUG | Calling downstream service | inventory-service
+2024-04-01T08:04:05 | s43lltglyp6z | clientA | INFO | Response sent | inventory-service
+2024-04-01T08:04:10 | 8v5cvu3ko2yc | clientB | WARN | Processing request | auth-service
+2024-04-01T08:04:15 | s43lltglyp6z | clientB | INFO | Calling downstream service | inventory-service
+2024-04-01T08:04:20 | v3s7usmhilgo | clientB | INFO | Token refreshed | inventory-service
+2024-04-01T08:04:25 | z9fjn8rcr4xh | clientA | INFO | Calling downstream service | auth-service
+2024-04-01T08:04:30 | 8v5cvu3ko2yc | clientA | DEBUG | Cache lookup complete | inventory-service
+2024-04-01T08:04:35 | 0je7aiftqmim | clientA | INFO | Retrying request to inventory-service | retry-controller
+2024-04-01T08:04:40 | bl68d8xjtmx6 | clientC | DEBUG | Calling downstream service | inventory-service
+2024-04-01T08:04:45 | z9fjn8rcr4xh | clientC | DEBUG | Token refreshed | auth-service
+2024-04-01T08:04:50 | ug3s0fubdquh | clientA | WARN | Request received | auth-service
+2024-04-01T08:04:55 | bl68d8xjtmx6 | clientC | DEBUG | Cache lookup complete | retry-controller
+2024-04-01T08:05:00 | 3e37cpy0imr5 | clientA | INFO | Calling downstream service | retry-controller
+2024-04-01T08:05:05 | bl68d8xjtmx6 | clientB | WARN | Calling downstream service | inventory-service
+2024-04-01T08:05:10 | 8v5cvu3ko2yc | clientA | INFO | Calling downstream service | data-service
+2024-04-01T08:05:15 | s43lltglyp6z | clientB | DEBUG | Request received | inventory-service
+2024-04-01T08:05:20 | bl68d8xjtmx6 | clientB | DEBUG | Calling downstream service | retry-controller
+2024-04-01T08:05:25 | bl68d8xjtmx6 | clientA | INFO | Processing request | auth-service
+2024-04-01T08:05:30 | v3s7usmhilgo | clientB | INFO | Response sent | inventory-service
+2024-04-01T08:05:35 | bl68d8xjtmx6 | clientA | DEBUG | Calling downstream service | auth-service
+2024-04-01T08:05:40 | v3s7usmhilgo | clientA | DEBUG | Token refreshed | data-service
+2024-04-01T08:05:45 | s43lltglyp6z | clientB | WARN | Processing request | inventory-service
+2024-04-01T08:05:50 | ocv5qs3rfnl6 | clientB | DEBUG | Calling downstream service | retry-controller
+2024-04-01T08:05:55 | 0je7aiftqmim | clientC | INFO | Cache lookup complete | data-service
+2024-04-01T08:06:00 | 8v5cvu3ko2yc | clientA | WARN | Cache lookup complete | data-service
+2024-04-01T08:06:05 | s43lltglyp6z | clientB | DEBUG | Calling downstream service | inventory-service
+2024-04-01T08:06:10 | 8v5cvu3ko2yc | clientA | WARN | Request received | inventory-service
+2024-04-01T08:06:15 | s43lltglyp6z | clientC | INFO | Calling downstream service | auth-service
+2024-04-01T08:06:20 | bl68d8xjtmx6 | clientB | DEBUG | Request received | inventory-service
+2024-04-01T08:06:25 | ug3s0fubdquh | clientA | WARN | Response sent | data-service
+2024-04-01T08:06:30 | s43lltglyp6z | clientA | DEBUG | Session validated | retry-controller
+2024-04-01T08:06:35 | 8v5cvu3ko2yc | clientB | WARN | Cache lookup complete | retry-controller
+2024-04-01T08:06:40 | 0je7aiftqmim | clientA | WARN | Response sent | inventory-service
+2024-04-01T08:06:45 | zuvqkvd96pus | clientC | INFO | Token refreshed | data-service
+2024-04-01T08:06:50 | ug3s0fubdquh | clientC | INFO | Cache lookup complete | inventory-service
+2024-04-01T08:06:55 | z9fjn8rcr4xh | clientC | DEBUG | Cache lookup complete | data-service
+2024-04-01T08:07:00 | ug3s0fubdquh | clientB | INFO | Response sent | retry-controller
+2024-04-01T08:07:05 | 3e37cpy0imr5 | clientC | WARN | Request received | retry-controller
+2024-04-01T08:07:10 | bl68d8xjtmx6 | clientB | INFO | Token refreshed | retry-controller
+2024-04-01T08:07:15 | v3s7usmhilgo | clientB | INFO | Session validated | retry-controller
+2024-04-01T08:07:20 | 8v5cvu3ko2yc | clientB | WARN | Processing request | auth-service
+2024-04-01T08:07:25 | 8v5cvu3ko2yc | clientB | DEBUG | Request received | data-service
+2024-04-01T08:07:30 | ocv5qs3rfnl6 | clientC | INFO | Processing request | data-service
+2024-04-01T08:07:35 | ocv5qs3rfnl6 | clientA | INFO | Request received | data-service
+2024-04-01T08:07:40 | 3e37cpy0imr5 | clientB | DEBUG | Token refreshed | retry-controller
+2024-04-01T08:07:45 | z9fjn8rcr4xh | clientC | WARN | Response sent | inventory-service
+2024-04-01T08:07:50 | ug3s0fubdquh | clientC | WARN | Cache lookup complete | retry-controller
+2024-04-01T08:07:55 | 3e37cpy0imr5 | clientC | INFO | Session validated | retry-controller
+2024-04-01T08:08:00 | z9fjn8rcr4xh | clientA | WARN | Token refreshed | auth-service
+2024-04-01T08:08:05 | z9fjn8rcr4xh | clientC | INFO | Token refreshed | auth-service
+2024-04-01T08:08:10 | v3s7usmhilgo | clientC | DEBUG | Calling downstream service | retry-controller
+2024-04-01T08:08:15 | 8v5cvu3ko2yc | clientC | DEBUG | Session validated | inventory-service
+2024-04-01T08:08:20 | 0je7aiftqmim | clientB | DEBUG | Session validated | inventory-service
+2024-04-01T08:08:25 | 3e37cpy0imr5 | clientB | WARN | Request received | retry-controller
+2024-04-01T08:08:30 | s43lltglyp6z | clientC | DEBUG | Token refreshed | inventory-service
+2024-04-01T08:08:35 | s43lltglyp6z | clientC | INFO | Session validated | data-service
+2024-04-01T08:08:40 | v3s7usmhilgo | clientB | DEBUG | Cache lookup complete | auth-service
+2024-04-01T08:08:45 | zuvqkvd96pus | clientB | WARN | Cache lookup complete | data-service
+2024-04-01T08:08:50 | zuvqkvd96pus | clientB | DEBUG | Calling downstream service | auth-service
+2024-04-01T08:08:55 | bl68d8xjtmx6 | clientA | WARN | Calling downstream service | retry-controller
+2024-04-01T08:09:00 | 3e37cpy0imr5 | clientA | WARN | Request received | auth-service
+2024-04-01T08:09:05 | ocv5qs3rfnl6 | clientB | DEBUG | Token refreshed | auth-service
+2024-04-01T08:09:10 | 0je7aiftqmim | clientA | INFO | Cache lookup complete | data-service
+2024-04-01T08:09:15 | ocv5qs3rfnl6 | clientC | INFO | Token refreshed | auth-service
+2024-04-01T08:09:20 | ocv5qs3rfnl6 | clientB | WARN | Session validated | auth-service
+2024-04-01T08:09:25 | 3e37cpy0imr5 | clientA | DEBUG | Request received | inventory-service
+2024-04-01T08:09:30 | 3e37cpy0imr5 | clientA | WARN | Token refreshed | inventory-service
+2024-04-01T08:09:35 | v3s7usmhilgo | clientC | WARN | Calling downstream service | inventory-service
+2024-04-01T08:09:40 | ocv5qs3rfnl6 | clientB | WARN | Calling downstream service | data-service
+2024-04-01T08:09:45 | zuvqkvd96pus | clientA | INFO | Request received | retry-controller
+2024-04-01T08:09:50 | ug3s0fubdquh | clientA | DEBUG | Response sent | auth-service
+2024-04-01T08:09:55 | v3s7usmhilgo | clientB | WARN | Token refreshed | retry-controller
+2024-04-01T08:10:00 | 8v5cvu3ko2yc | clientA | WARN | Response sent | inventory-service
+2024-04-01T08:10:05 | v3s7usmhilgo | clientC | DEBUG | Calling downstream service | data-service
+2024-04-01T08:10:10 | bl68d8xjtmx6 | clientC | INFO | Session validated | retry-controller
+2024-04-01T08:10:15 | ocv5qs3rfnl6 | clientB | DEBUG | Calling downstream service | data-service
+2024-04-01T08:10:20 | z9fjn8rcr4xh | clientB | INFO | Request received | data-service
+2024-04-01T08:10:25 | 3e37cpy0imr5 | clientA | WARN | Token refreshed | retry-controller
+2024-04-01T08:10:30 | 0je7aiftqmim | clientA | WARN | Response sent | retry-controller
+2024-04-01T08:10:35 | zuvqkvd96pus | clientA | WARN | Processing request | retry-controller
+2024-04-01T08:10:40 | z9fjn8rcr4xh | clientA | INFO | Response sent | retry-controller
+2024-04-01T08:10:45 | z9fjn8rcr4xh | clientA | DEBUG | Token refreshed | data-service
+2024-04-01T08:10:50 | bl68d8xjtmx6 | clientB | DEBUG | Processing request | retry-controller
+2024-04-01T08:10:55 | zuvqkvd96pus | clientB | INFO | Response sent | retry-controller
+2024-04-01T08:11:00 | ug3s0fubdquh | clientB | INFO | Request received | retry-controller
+2024-04-01T08:11:05 | s43lltglyp6z | clientA | INFO | Token refreshed | data-service
+2024-04-01T08:11:10 | z9fjn8rcr4xh | clientC | INFO | Token refreshed | retry-controller
+2024-04-01T08:11:15 | zuvqkvd96pus | clientA | INFO | Calling downstream service | inventory-service
+2024-04-01T08:11:20 | ug3s0fubdquh | clientA | DEBUG | Cache lookup complete | data-service
+2024-04-01T08:11:25 | s43lltglyp6z | clientC | DEBUG | Cache lookup complete | auth-service
+2024-04-01T08:11:30 | bl68d8xjtmx6 | clientC | DEBUG | Cache lookup complete | inventory-service
+2024-04-01T08:11:35 | v3s7usmhilgo | clientC | INFO | Token refreshed | data-service
+2024-04-01T08:11:40 | 0je7aiftqmim | clientC | INFO | Calling downstream service | inventory-service
+2024-04-01T08:11:45 | 3e37cpy0imr5 | clientB | WARN | Calling downstream service | data-service
+2024-04-01T08:11:50 | v3s7usmhilgo | clientC | INFO | Processing request | data-service
+2024-04-01T08:11:55 | bl68d8xjtmx6 | clientB | WARN | Cache lookup complete | data-service
+2024-04-01T08:12:00 | z9fjn8rcr4xh | clientA | WARN | Processing request | data-service
+2024-04-01T08:12:05 | s43lltglyp6z | clientA | INFO | Processing request | auth-service
+2024-04-01T08:12:10 | ocv5qs3rfnl6 | clientA | WARN | Response sent | retry-controller
+2024-04-01T08:12:15 | 0je7aiftqmim | clientC | DEBUG | Request received | auth-service
+2024-04-01T08:12:20 | zuvqkvd96pus | clientB | INFO | Cache lookup complete | data-service
+2024-04-01T08:12:25 | ocv5qs3rfnl6 | clientB | WARN | Token refreshed | retry-controller
+2024-04-01T08:12:30 | 3e37cpy0imr5 | clientC | DEBUG | Calling downstream service | data-service
+2024-04-01T08:12:35 | bl68d8xjtmx6 | clientC | WARN | Response sent | retry-controller
+2024-04-01T08:12:40 | bl68d8xjtmx6 | clientC | DEBUG | Response sent | retry-controller
+2024-04-01T08:12:45 | v3s7usmhilgo | clientC | DEBUG | Calling downstream service | retry-controller
+2024-04-01T08:12:50 | 8v5cvu3ko2yc | clientA | INFO | Response sent | auth-service
+2024-04-01T08:12:55 | s43lltglyp6z | clientC | DEBUG | Calling downstream service | inventory-service
+2024-04-01T08:13:00 | bl68d8xjtmx6 | clientA | INFO | Session validated | auth-service
+2024-04-01T08:13:05 | 3e37cpy0imr5 | clientC | WARN | Cache lookup complete | retry-controller
+2024-04-01T08:13:10 | zuvqkvd96pus | clientB | DEBUG | Session validated | retry-controller
+2024-04-01T08:13:15 | zuvqkvd96pus | clientC | WARN | Processing request | data-service
+2024-04-01T08:13:20 | zuvqkvd96pus | clientC | DEBUG | Request received | data-service
+2024-04-01T08:13:25 | 3e37cpy0imr5 | clientB | DEBUG | Response sent | inventory-service
+2024-04-01T08:13:30 | 8v5cvu3ko2yc | clientA | DEBUG | Response sent | inventory-service
+2024-04-01T08:13:35 | ug3s0fubdquh | clientB | INFO | Calling downstream service | inventory-service
+2024-04-01T08:13:40 | 8v5cvu3ko2yc | clientA | INFO | Request received | data-service
+2024-04-01T08:13:45 | zuvqkvd96pus | clientA | INFO | Processing request | inventory-service
+2024-04-01T08:13:50 | zuvqkvd96pus | clientA | INFO | Calling downstream service | retry-controller
+2024-04-01T08:13:55 | 0je7aiftqmim | clientC | WARN | Calling downstream service | data-service
+2024-04-01T08:14:00 | z9fjn8rcr4xh | clientC | INFO | Token refreshed | auth-service
+2024-04-01T08:14:05 | ug3s0fubdquh | clientC | INFO | Processing request | inventory-service
+2024-04-01T08:14:10 | s43lltglyp6z | clientC | DEBUG | Processing request | inventory-service
+2024-04-01T08:14:15 | zuvqkvd96pus | clientC | DEBUG | Calling downstream service | data-service
+2024-04-01T08:14:20 | z9fjn8rcr4xh | clientA | WARN | Token refreshed | inventory-service
+2024-04-01T08:14:25 | 3e37cpy0imr5 | clientC | DEBUG | Session validated | inventory-service
+2024-04-01T08:14:30 | ug3s0fubdquh | clientC | WARN | Request received | auth-service
+2024-04-01T08:14:35 | z9fjn8rcr4xh | clientC | INFO | Response sent | retry-controller
+2024-04-01T08:14:40 | ocv5qs3rfnl6 | clientC | DEBUG | Response sent | inventory-service
+2024-04-01T08:14:45 | bl68d8xjtmx6 | clientB | DEBUG | Cache lookup complete | inventory-service
+2024-04-01T08:14:50 | v3s7usmhilgo | clientB | WARN | Cache lookup complete | data-service
+2024-04-01T08:14:55 | z9fjn8rcr4xh | clientC | WARN | Processing request | data-service
+2024-04-01T08:15:00 | ug3s0fubdquh | clientB | INFO | Session validated | retry-controller
+2024-04-01T08:15:05 | ocv5qs3rfnl6 | clientC | DEBUG | Calling downstream service | inventory-service
+2024-04-01T08:15:10 | z9fjn8rcr4xh | clientC | INFO | Cache lookup complete | auth-service
+2024-04-01T08:15:15 | z9fjn8rcr4xh | clientA | WARN | Session validated | inventory-service
+2024-04-01T08:15:20 | 3e37cpy0imr5 | clientC | INFO | Token refreshed | inventory-service
+2024-04-01T08:15:25 | 8v5cvu3ko2yc | clientA | INFO | Session validated | retry-controller
+2024-04-01T08:15:30 | ocv5qs3rfnl6 | clientB | DEBUG | Calling downstream service | retry-controller
+2024-04-01T08:15:35 | 3e37cpy0imr5 | clientB | DEBUG | Token refreshed | auth-service
+2024-04-01T08:15:40 | v3s7usmhilgo | clientC | DEBUG | Token refreshed | data-service
+2024-04-01T08:15:45 | 0je7aiftqmim | clientC | DEBUG | Session validated | retry-controller
+2024-04-01T08:15:50 | zuvqkvd96pus | clientB | DEBUG | Session validated | data-service
+2024-04-01T08:15:55 | v3s7usmhilgo | clientC | INFO | Calling downstream service | auth-service
+2024-04-01T08:16:00 | s43lltglyp6z | clientA | WARN | Token refreshed | data-service
+2024-04-01T08:16:05 | ocv5qs3rfnl6 | clientB | WARN | Session validated | data-service
+2024-04-01T08:16:10 | bl68d8xjtmx6 | clientA | DEBUG | Request received | inventory-service
+2024-04-01T08:16:15 | ocv5qs3rfnl6 | clientA | WARN | Request received | auth-service
+2024-04-01T08:16:20 | ug3s0fubdquh | clientC | WARN | Request received | data-service
+2024-04-01T08:16:25 | 3e37cpy0imr5 | clientB | WARN | Token refreshed | data-service
+2024-04-01T08:16:30 | 0je7aiftqmim | clientC | DEBUG | Processing request | auth-service
+2024-04-01T08:16:35 | 3e37cpy0imr5 | clientC | INFO | Session validated | data-service

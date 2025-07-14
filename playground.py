@@ -1,11 +1,22 @@
-from connectors.vector_db_connector import MilvusConnector
+from connectors.db_connector import PostgresConnector
+import pandas as pd
+from connectors.db_schemas.table_schema import TablesSchema
+from dotenv import load_dotenv
+_ = load_dotenv(override=True)
 
-connector = MilvusConnector()
 
-query = "What technologies are supported for containerized deployment of FCC application?"
+connector = PostgresConnector()
+schema = TablesSchema.patterns_lookup_schema
+data = pd.read_csv('data/error_patterns.csv').to_dict(orient='records')
 
-results = connector.search_milvus(query_text=query, top_k=3)
 
-print(results)
+connector.create_table(
+    table_name="patterns_lookup",
+    schema=schema
+)
 
-breakpoint()
+for row in data:
+    connector.insert_data(
+        table_name="patterns_lookup",
+        data=row
+    )

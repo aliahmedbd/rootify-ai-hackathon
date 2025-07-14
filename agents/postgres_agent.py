@@ -92,6 +92,23 @@ class PostGresAgent(BaseAgent):
 
         return state
     
+    def get_pattens_lookup(self, state: AgentState):
+        """
+        Get patterns lookup data from the database.
+        :param state: The state of the agent containing parameters for the query.
+        :return: updated state with lookup data.
+        """
+        # Fetch lookup data from the database
+        connector = PostgresConnector()
+        lookup_data = connector.get_lookup_data()
+
+        # Update the state with the lookup data
+        state['postgres_agent_response'] = lookup_data
+        state['memory_chain'].append({
+            'postgres_agent_response': lookup_data
+        })
+
+        return state
 
     def run_sql_query(self, state: AgentState):
         # check the tool to use.
