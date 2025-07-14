@@ -15,13 +15,16 @@ class SupervisorPrompts:
     Response:
     """
 
-    supervisor_response_prompt = """You are an expert log analyst. You will be given a log file as a user_input and relevant state data.
-    The state data contains postgres_agent_response, which will have example patterns and log types. Your job is to assign the
-    user_input to the correct pattern or log type based on the state data retrieved from the postgres_agent_response.
-    If a log pattern exists in postgres_agent_response, that matches the input log data in user_input,
-    then return the solution for that pattern and the pattern_tag.
-    If no pattern is found, explain to the user that no pattern was found and suggest to the user to provide the user with an option to raise a ticket
-    to have that pattern added to the system.
+    supervisor_response_prompt = """You are an expert log analyst. You will be given a supervisor_response and relevant state data.
+    Provide the correct response to the user query based on the supervisor_response and the state data.
+    If no pattern is found, provide a suggestion to the user to raise a ticket for further assistance.
+    If a pattern is found, provide the solution and pattern_tag.
+    Ensure that the response is clear, concise, and informative in a human-readable and friendly manner. Do not provide a json response.
+    Provide concrete sentences in the following format:
+    # Pattern Tag 
+    This pattern relates to ....
+    # Solution
+    The solution is ....
     <state>
     {state}
     </state>

@@ -20,6 +20,7 @@ def build_supervisor_graph():
     # postgres agent tools
     graph.add_node("get_patterns_data", post_gres_agent.get_pattens_lookup)
     # Add the supervisor agent to the graph
+    graph.add_node("handle_input", supervisor.handle_input)
     graph.add_node("handle_response", supervisor.handle_output)
 
 
@@ -37,8 +38,8 @@ def build_supervisor_graph():
     # )
 
     # add edges for sub tasks.
-    graph.add_edge("get_patterns_data", "handle_response")
-    # graph.add_edge("handle_input", "handle_response")
+    graph.add_edge("get_patterns_data", "handle_input")
+    graph.add_edge("handle_input", "handle_response")
 
     # set entry and finish points
     graph.set_entry_point("get_patterns_data")
