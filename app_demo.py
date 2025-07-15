@@ -3,9 +3,8 @@ from dotenv import load_dotenv
 _ = load_dotenv()
 
 import streamlit as st
-import streamlit.components.v1 as components
 from graphs.build_graph import build_supervisor_graph
-import psycopg2
+import base64
 
 
 
@@ -19,12 +18,32 @@ def get_graph():
 graph = get_graph() 
 
 # Streamlit UI components
-st.title("Rootify - NatWest Demo")
+def get_image_base64(image_path):
+    with open(image_path, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Encode your image
+img_base64 = get_image_base64("images/rootify_logo.jpg")
+
+# Display image + title inline
+st.markdown(
+    f"""
+    <div style="display: flex; align-items: center;">
+        <img src="data:image/jpg;base64,{img_base64}" width="100" style="margin-right:25px;">
+        <h1 style="margin: 0;">Rootify - Natwest Demo</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# st.title("Rootify - NatWest Demo")
 st.sidebar.image('images/natwest_logo.jpg', use_container_width=True)
 st.sidebar.image('images/watsonx_logo.jpg', use_container_width=True)
 
 
 # Upload file
+st.write("\n\n\n\n\n\n")
 uploaded_file = st.file_uploader("Upload your log file", type=["txt"])
 
 # Check if a file has been uploaded

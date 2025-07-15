@@ -20,11 +20,16 @@ class SupervisorPrompts:
     If no pattern is found, provide a suggestion to the user to raise a ticket for further assistance.
     If a pattern is found, provide the solution and pattern_tag.
     Ensure that the response is clear, concise, and informative in a human-readable and friendly manner. Do not provide a json response.
-    Provide concrete sentences in the following format:
-    # Pattern Tag 
+    Provide concrete sentences in the following format with bold headings # Pattern and # Solution as shown in the format below:
+    <format>
+    # Pattern 
+    \n
     This pattern relates to ....
     # Solution
-    The solution is ....
+    \n
+    The solution for this pattern is to ...
+    </format>
+
     <state>
     {state}
     </state>
